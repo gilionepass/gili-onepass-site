@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gili One Pass Estimate</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <header class="hero">
+      <h1 id="siteTitle">Gili One Pass</h1>
+      <p id="siteSubtitle">예상 견적을 확인하고 바로 WhatsApp으로 문의하세요</p>
+
+      <div class="lang-wrap">
+        <button type="button" onclick="setLanguage('ko')">한국어</button>
+        <button type="button" onclick="setLanguage('en')">English</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2 id="formTitle">예상 견적 계산기</h2>
+
+      <div class="grid">
+        <div>
+          <label id="labelCompany" for="company">선박사</label>
+          <select id="company">
+            <option value="EKAJAYA">EKAJAYA</option>
+            <option value="WAHANA">WAHANA</option>
+            <option value="SEMAYAONE">SEMAYA ONE</option>
+            <option value="WIJAYA">WIJAYA</option>
+            <option value="MIX1">MIX1 IN WAHANA / OUT EKAJAYA</option>
+            <option value="MIX2">MIX2 IN SEMAYA / OUT EKAJAYA</option>
+          </select>
+        </div>
+
+        <div>
+          <label id="labelRoundType" for="roundType">여정 구분</label>
+          <select id="roundType">
+            <option value="ROUND">ROUND</option>
+            <option value="DEPARTURE">DEPARTURE</option>
+            <option value="RETURN">RETURN</option>
+            <option value="X">X</option>
+          </select>
+        </div>
+
+        <div>
+          <label id="labelPeople" for="people">인원 수</label>
+          <input id="people" type="number" min="1" value="1" />
+        </div>
+
+        <div>
+          <label id="labelWithTransfer" for="withTransfer">세마야 with transfer</label>
+          <select id="withTransfer">
+            <option value="AUTO">AUTO</option>
+            <option value="YES">YES</option>
+            <option value="NO">NO</option>
+          </select>
+        </div>
+
+        <div>
+          <label id="labelPickup" for="pickupZone">픽업 지역</label>
+          <select id="pickupZone">
+            <option value="NONE">선택 안함</option>
+            <option value="UBUD">UBUD</option>
+            <option value="OUTER_UBUD">OUTER UBUD</option>
+            <option value="SANUR">SANUR</option>
+            <option value="KUTA">KUTA</option>
+            <option value="SEMINYAK">SEMINYAK</option>
+            <option value="CANGGU">CANGGU</option>
+            <option value="JIMBARAN">JIMBARAN</option>
+            <option value="NUSA_DUA">NUSA DUA</option>
+            <option value="AIRPORT">AIRPORT</option>
+            <option value="NIGHT_AIRPORT">NIGHT AIRPORT</option>
+          </select>
+        </div>
+
+        <div>
+          <label id="labelDropoff" for="dropoffZone">샌딩 지역</label>
+          <select id="dropoffZone">
+            <option value="NONE">선택 안함</option>
+            <option value="UBUD">UBUD</option>
+            <option value="OUTER_UBUD">OUTER UBUD</option>
+            <option value="SANUR">SANUR</option>
+            <option value="KUTA">KUTA</option>
+            <option value="SEMINYAK">SEMINYAK</option>
+            <option value="CANGGU">CANGGU</option>
+            <option value="JIMBARAN">JIMBARAN</option>
+            <option value="NUSA_DUA">NUSA DUA</option>
+            <option value="AIRPORT">AIRPORT</option>
+            <option value="NIGHT_AIRPORT">NIGHT AIRPORT</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="primary" type="button" onclick="runEstimate()" id="calcBtn">견적 계산하기</button>
+        <button class="wa" type="button" onclick="sendWhatsApp()" id="waBtn">WhatsApp 문의</button>
+      </div>
+
+      <div class="result-card">
+        <h3 id="resultTitle">계산 결과</h3>
+        <div class="result-main" id="totalPrice">0 IDR</div>
+        <div class="result-detail" id="detailText">상세내역이 여기에 표시됩니다</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
