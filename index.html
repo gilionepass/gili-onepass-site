@@ -684,37 +684,47 @@
   return 0;
 }
 
-    function getTransportTotal(pickup, dropoff, passengers) {
-      const vehicleCount = getVehicleCount(passengers);
-      const pickupSelected = pickup && pickup !== "미선택";
-      const dropoffSelected = dropoff && dropoff !== "미선택";
+   function getTransportTotal(pickup, dropoff, passengers) {
+  const vehicleCount = getVehicleCount(passengers);
+  const pickupSelected = pickup && pickup !== "미선택";
+  const dropoffSelected = dropoff && dropoff !== "미선택";
 
-      let base = 0;
-      let lines = [];
+  let total = 0;
+  let lines = [];
 
-    if (pickupSelected && dropoffSelected) {
-  const pickupPrice = transportPrices[pickup]?.duo ?? 0;
-  const dropoffPrice = transportPrices[dropoff]?.duo ?? 0;
-  base = pickupPrice + dropoffPrice;
-  lines.push(`🚐 픽업 ${pickup} ${pickupPrice}K IDR`);
-  lines.push(`🚐 샌딩 ${dropoff} ${dropoffPrice}K IDR`);
-} else if (pickupSelected) {
-  const pickupPrice = transportPrices[pickup]?.single ?? 0;
-  base = pickupPrice;
-  lines.push(`🚐 픽업 ${pickup} ${pickupPrice}K IDR`);
-} else if (dropoffSelected) {
-  const dropoffPrice = transportPrices[dropoff]?.single ?? 0;
-  base = dropoffPrice;
-  lines.push(`🚐 샌딩 ${dropoff} ${dropoffPrice}K IDR`);
+  if (pickupSelected && dropoffSelected) {
+    const pickupPrice = transportPrices[pickup]?.duo ?? 0;
+    const dropoffPrice = transportPrices[dropoff]?.duo ?? 0;
+
+    const pickupTotal = pickupPrice * vehicleCount;
+    const dropoffTotal = dropoffPrice * vehicleCount;
+
+    total = pickupTotal + dropoffTotal;
+
+    lines.push(`🚐 픽업 ${pickup} ${pickupPrice}K IDR × ${vehicleCount}대 = ${pickupTotal}K IDR`);
+    lines.push(`🚐 샌딩 ${dropoff} ${dropoffPrice}K IDR × ${vehicleCount}대 = ${dropoffTotal}K IDR`);
+  } else if (pickupSelected) {
+    const pickupPrice = transportPrices[pickup]?.single ?? 0;
+    const pickupTotal = pickupPrice * vehicleCount;
+
+    total = pickupTotal;
+
+    lines.push(`🚐 픽업 ${pickup} ${pickupPrice}K IDR × ${vehicleCount}대 = ${pickupTotal}K IDR`);
+  } else if (dropoffSelected) {
+    const dropoffPrice = transportPrices[dropoff]?.single ?? 0;
+    const dropoffTotal = dropoffPrice * vehicleCount;
+
+    total = dropoffTotal;
+
+    lines.push(`🚐 샌딩 ${dropoff} ${dropoffPrice}K IDR × ${vehicleCount}대 = ${dropoffTotal}K IDR`);
+  }
+
+  return {
+    total,
+    vehicleCount,
+    lines
+  };
 }
-
-      return {
-        total: base * vehicleCount,
-        base,
-        vehicleCount,
-        lines
-      };
-    }
 
     function getFerryPriceByMonth(month, company, priceType) {
       return monthlyFerryPrices[month]?.[company]?.[priceType] ?? null;
