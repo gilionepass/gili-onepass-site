@@ -675,11 +675,12 @@
       return `${rounded}K IDR`;
     }
 
-    function getVehicleCount(passengers) {
-      if (passengers <= 4) return 1;
-      if (passengers <= 8) return 2;
-      return 3;
-    }
+   function getVehicleCount(passengers) {
+  if (passengers >= 1 && passengers <= 4) return 1;
+  if (passengers >= 5 && passengers <= 8) return 2;
+  if (passengers >= 9 && passengers <= 12) return 3;
+  return 0;
+}
 
     function getTransportTotal(pickup, dropoff, passengers) {
       const vehicleCount = getVehicleCount(passengers);
