@@ -164,52 +164,84 @@ function runEstimate() {
   const departureDate = document.getElementById("departureDate")?.value;
   const returnDate = document.getElementById("returnDate")?.value;
 
-  if (!company || !tripType) {
-    alert("선박사와 여정 구분을 확인해주세요");
-    return;
-  }
-
-  if (!people || people < 1) {
-    alert("인원 수를 입력해주세요");
-    return;
-  }
+  if (!company || !tripType || !people) return;
 
   const ticketMonth = getMonthFromDate(departureDate || returnDate);
+  if (!ticketMonth) return;
 
-  if (!ticketMonth) {
-    alert("출발 날짜 또는 리턴 날짜를 선택해주세요");
-    return;
+  // 🎯 티켓 계산
+  let ticketUnit = 0;
+
+  if (tripType === "ROUND") {
+    ticketUnit = getTicketUnitPrice(company, "ROUND", ticketMonth);
+  } else if (tripType === "DEPARTURE") {
+    ticketUnit = getTicketUnitPrice(company, "DEPARTURE", ticketMonth);
+  } else {
+    ticketUnit = getTicketUnitPrice(company, "RETURN", ticketMonth);
   }
 
-  const ticketUnit = getTicketUnitPrice(company, tripType, ticketMonth);
   const ticketTotal = ticketUnit * people;
 
-  const pickupPrice = getTransportUnitPrice(pickup, tripType);
-  const dropoffPrice = getTransportUnitPrice(dropoff, tripType);
-  const transportTotal = pickupPrice + dropoffPrice;
+  // 🎯 차량 수
+  let vehicleCount = 1;
+  if (people >= 5 && people <= 8) vehicleCount = 2;
+  if (people >= 9) vehicleCount = 3;
 
+  // 🎯 픽업 샌딩
+  const pickupUnit = getTransportUnitPrice(pickup, tripType);
+  const dropoffUnit = getTransportUnitPrice(dropoff, tripType);
+
+  const pickupTotal = pickupUnit * vehicleCount;
+  const dropoffTotal = dropoffUnit * vehicleCount;
+
+  const transportTotal = pickupTotal + dropoffTotal;
+
+  // 🎯 항구세
+  let taxText = "";
+
+  if (tripType === "ROUND") {
+    taxText =
+      company === "EKAJAYA"
+        ? "🔴 인당 항구세 50K 포함"
+        : "🔴 인당 항구세 50K 미포함";
+  }
+
+  if (tripType === "DEPARTURE") {
+    taxText =
+      company === "EKAJAYA"
+        ? "🔴 입도 항구세 30K 포함"
+        : "🔴 입도 항구세 30K 미포함";
+  }
+
+  if (tripType === "RETURN") {
+    taxText =
+      company === "EKAJAYA"
+        ? "🔴 출도 항구세 20K 포함"
+        : "🔴 출도 항구세 20K 미포함";
+  }
+
+  // 🎯 총합
   const total = ticketTotal + transportTotal;
+  const perPerson = Math.round(total / people);
 
-  const totalPriceEl = document.getElementById("totalPrice");
-  const resultDetailEl = document.getElementById("resultDetail");
+  // 🎯 출력
+  document.getElementById("totalPrice").innerText =
+    "Rp " + total.toLocaleString();
 
-  if (totalPriceEl) {
-    totalPriceEl.innerText = formatIDR(total);
-  }
+  document.getElementById("resultDetail").innerText =
+    `총 예상 견적\n` +
+    `Rp ${total.toLocaleString()}\n` +
+    `1인당 약 Rp ${perPerson.toLocaleString()}\n\n` +
 
-  if (resultDetailEl) {
-    resultDetailEl.innerText =
-      `적용 월: ${ticketMonth}월\n` +
-      `선박사: ${COMPANY_LABELS[company] || company}\n` +
-      `여정 구분: ${tripType}\n` +
-      `인원 수: ${people}명\n\n` +
-      `티켓 1인 단가: ${formatIDR(ticketUnit)}\n` +
-      `티켓 합계: ${formatIDR(ticketTotal)}\n\n` +
-      `픽업 ${ZONE_LABELS[pickup] || pickup}: ${formatIDR(pickupPrice)}\n` +
-      `샌딩 ${ZONE_LABELS[dropoff] || dropoff}: ${formatIDR(dropoffPrice)}\n` +
-      `교통 합계: ${formatIDR(transportTotal)}\n\n` +
-      `최종 총합: ${formatIDR(total)}`;
-  }
+    `🎫 티켓 (${people}명)\n` +
+    `Rp ${ticketTotal.toLocaleString()}\n` +
+    `1인 ${ticketUnit.toLocaleString()} × ${people}명\n` +
+    `${taxText}\n\n` +
+
+    `🚐 픽업 (${vehicleCount}대)\nRp ${pickupTotal.toLocaleString()}\n` +
+    `🚐 샌딩 (${vehicleCount}대)\nRp ${dropoffTotal.toLocaleString()}\n\n` +
+
+    `💰 합계 Rp ${total.toLocaleString()}`;
 }
 
 function sendWhatsApp() {
