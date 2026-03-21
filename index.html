@@ -172,9 +172,11 @@
   }
 
   #mixArrivalButtons,
-  #mixReturnButtons {
-    grid-template-columns: repeat(4, 1fr);
-  }
+#mixReturnButtons {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px;
+}
 
   .action-row {
     grid-template-columns: 1fr;
