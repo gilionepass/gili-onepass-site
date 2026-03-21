@@ -166,7 +166,35 @@
     .choice-btn.disabled {
       display: none;
     }
+@media (max-width: 540px) {
+  .button-grid.ferry-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 
+  #mixArrivalButtons,
+  #mixReturnButtons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .action-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ticket-price-note {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.55;
+  margin-bottom: 2px;
+}
+
+.tax-note {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.55;
+}
     .mix-box {
       display: none;
       margin-top: 10px;
@@ -1022,7 +1050,7 @@
 
   const hasPickup = state.tripType !== "RETURN_ONLY" && pickup && pickup !== "미선택";
   const hasDropoff = state.tripType !== "ARRIVAL_ONLY" && dropoff && dropoff !== "미선택";
-  const useDuoPrice = hasPickup && hasDropoff;
+  const useDuoPrice = (hasPickup && hasDropoff) || state.tripType !== "ROUND";
 
   let pickupTotal = 0;
   let dropoffTotal = 0;
@@ -1205,8 +1233,17 @@
       ui.resultPerPersonEl.textContent = `1인당 약 ${formatRpFromK(perPersonK)}`;
 
       ui.ticketLabelEl.textContent = ticket.label;
-      ui.ticketSubEl.textContent = ticket.taxNote;
-      ui.ticketPriceEl.textContent = formatRpFromK(ticket.total);
+
+const ticketUnitLabel = state.tripType === "ROUND"
+  ? "인당 왕복 티켓"
+  : "인당 편도 티켓";
+
+ui.ticketSubEl.innerHTML = `
+  <div class="ticket-price-note">${ticketUnitLabel} ${formatRpFromK(ticket.perPerson)} × ${passengers}명</div>
+  <div class="tax-note">${ticket.taxNote}</div>
+`;
+
+ui.ticketPriceEl.textContent = formatRpFromK(ticket.total);
 
       if (transport.pickupTotal > 0) {
         ui.pickupRowEl.style.display = "grid";
