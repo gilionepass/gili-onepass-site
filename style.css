@@ -104,3 +104,17 @@ button {
   font-size: 12px;
   font-weight: 800;
 }
+
+#mixArrivalButtons,
+#mixReturnButtons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+@media (max-width: 540px) {
+  #mixArrivalButtons,
+  #mixReturnButtons {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
