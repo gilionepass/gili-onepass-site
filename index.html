@@ -166,6 +166,14 @@
     .choice-btn.disabled {
       display: none;
     }
+
+    #mixArrivalButtons,
+#mixReturnButtons {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 8px;
+}
+    
 @media (max-width: 540px) {
   .button-grid.ferry-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -454,10 +462,6 @@
       font-weight: 800;
     }
 
-    @media (max-width: 540px) {
-      .button-grid.ferry-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
 
       .action-row {
         grid-template-columns: 1fr;
