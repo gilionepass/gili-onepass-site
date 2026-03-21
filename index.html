@@ -1015,41 +1015,51 @@
       };
     }
 
-    function calculateTransport(passengers) {
-      const vehicleCount = getVehicleCount(passengers);
-      const pickup = ui.pickupLocationEl.value;
-      const dropoff = ui.dropoffLocationEl.value;
+   function calculateTransport(passengers) {
+  const vehicleCount = getVehicleCount(passengers);
+  const pickup = ui.pickupLocationEl.value;
+  const dropoff = ui.dropoffLocationEl.value;
 
-      let pickupTotal = 0;
-      let dropoffTotal = 0;
-      let pickupLabel = "";
-      let dropoffLabel = "";
-      let pickupSub = "";
-      let dropoffSub = "";
+  const hasPickup = state.tripType !== "RETURN_ONLY" && pickup && pickup !== "미선택";
+  const hasDropoff = state.tripType !== "ARRIVAL_ONLY" && dropoff && dropoff !== "미선택";
+  const useDuoPrice = hasPickup && hasDropoff;
 
-      if (state.tripType !== "RETURN_ONLY" && pickup && pickup !== "미선택") {
-        const pickupBase = priceData.transport[pickup]?.single ?? 0;
-        pickupTotal = pickupBase * vehicleCount;
-        pickupLabel = `픽업 ${pickup} (${vehicleCount}대)`;
-        pickupSub = vehicleCount > 1 ? `${formatRpFromK(pickupBase)} × ${vehicleCount}대` : "";
-      }
+  let pickupTotal = 0;
+  let dropoffTotal = 0;
+  let pickupLabel = "";
+  let dropoffLabel = "";
+  let pickupSub = "";
+  let dropoffSub = "";
 
-      if (state.tripType !== "ARRIVAL_ONLY" && dropoff && dropoff !== "미선택") {
-        const dropoffBase = priceData.transport[dropoff]?.single ?? 0;
-        dropoffTotal = dropoffBase * vehicleCount;
-        dropoffLabel = `샌딩 ${dropoff} (${vehicleCount}대)`;
-        dropoffSub = vehicleCount > 1 ? `${formatRpFromK(dropoffBase)} × ${vehicleCount}대` : "";
-      }
+  if (hasPickup) {
+    const pickupBase = useDuoPrice
+      ? (priceData.transport[pickup]?.duo ?? 0)
+      : (priceData.transport[pickup]?.single ?? 0);
 
-      return {
-        pickupTotal,
-        dropoffTotal,
-        pickupLabel,
-        dropoffLabel,
-        pickupSub,
-        dropoffSub
-      };
-    }
+    pickupTotal = pickupBase * vehicleCount;
+    pickupLabel = `픽업 ${pickup} (${vehicleCount}대)`;
+    pickupSub = vehicleCount > 1 ? `${formatRpFromK(pickupBase)} × ${vehicleCount}대` : "";
+  }
+
+  if (hasDropoff) {
+    const dropoffBase = useDuoPrice
+      ? (priceData.transport[dropoff]?.duo ?? 0)
+      : (priceData.transport[dropoff]?.single ?? 0);
+
+    dropoffTotal = dropoffBase * vehicleCount;
+    dropoffLabel = `샌딩 ${dropoff} (${vehicleCount}대)`;
+    dropoffSub = vehicleCount > 1 ? `${formatRpFromK(dropoffBase)} × ${vehicleCount}대` : "";
+  }
+
+  return {
+    pickupTotal,
+    dropoffTotal,
+    pickupLabel,
+    dropoffLabel,
+    pickupSub,
+    dropoffSub
+  };
+}
 
     function formatDateEnglish(dateValue) {
       if (!dateValue) return "N/A";
