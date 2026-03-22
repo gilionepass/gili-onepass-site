@@ -41,8 +41,10 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
-  max-width: calc(100% - 32px);
+  max-width: calc(100% - 24px);
   text-align: center;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .toast.show {
@@ -135,7 +137,7 @@
   gap: 8px;
   margin-bottom: 16px;
 }
-
+    
 .lang-chip {
   text-align: center;
   padding: 8px 6px;
@@ -157,13 +159,14 @@
   white-space: nowrap;
 }
 
-    .lang-chip.active {
+   .lang-chip.active {
   background: #eef8fb;
   color: #0f172a;
   border-color: #8be2d7;
   opacity: 1;
 }
 
+    
     .button-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -650,7 +653,7 @@
         <div class="row" id="ticketRow">
           <div>
             <div class="row-title" id="ticketLabel">페리티켓</div>
-           <div class="row-sub tax-note" id="ticketSub"></div>
+           <div class="row-sub" id="ticketSub"></div>
           </div>
           <div class="row-price" id="ticketPrice">Rp 0</div>
         </div>
@@ -928,30 +931,41 @@
     }
 
     function populateLocations() {
-      ui.pickupLocationEl.innerHTML = "";
-      ui.dropoffLocationEl.innerHTML = "";
+  ui.pickupLocationEl.innerHTML = "";
+  ui.dropoffLocationEl.innerHTML = "";
 
-      const order = priceData.transportOrder || Object.keys(priceData.transport);
+  const order = priceData.transportOrder || Object.keys(priceData.transport);
 
-      order.forEach((koreanLabel) => {
-        if (!priceData.transport[koreanLabel]) return;
+  const preferredTop = "배출발 전날 야간공항 픽업";
+  const preferredBottom = "미선택";
 
-        const op1 = document.createElement("option");
-        op1.value = koreanLabel;
-        op1.textContent = koreanLabel;
-        ui.pickupLocationEl.appendChild(op1);
+  const sortedOrder = [...order].sort((a, b) => {
+    if (a === preferredTop) return -1;
+    if (b === preferredTop) return 1;
+    if (a === preferredBottom) return 1;
+    if (b === preferredBottom) return -1;
+    return 0;
+  });
 
-        const op2 = document.createElement("option");
-        op2.value = koreanLabel;
-        op2.textContent = koreanLabel;
-        ui.dropoffLocationEl.appendChild(op2);
-      });
+  sortedOrder.forEach((koreanLabel) => {
+    if (!priceData.transport[koreanLabel]) return;
 
-      if (priceData.transport["미선택"]) {
-        ui.pickupLocationEl.value = "미선택";
-        ui.dropoffLocationEl.value = "미선택";
-      }
-    }
+    const op1 = document.createElement("option");
+    op1.value = koreanLabel;
+    op1.textContent = koreanLabel;
+    ui.pickupLocationEl.appendChild(op1);
+
+    const op2 = document.createElement("option");
+    op2.value = koreanLabel;
+    op2.textContent = koreanLabel;
+    ui.dropoffLocationEl.appendChild(op2);
+  });
+
+  if (priceData.transport["미선택"]) {
+    ui.pickupLocationEl.value = "미선택";
+    ui.dropoffLocationEl.value = "미선택";
+  }
+}
 
     function hideWarnings() {
       ui.topErrorEl.style.display = "none";
@@ -1151,15 +1165,14 @@
 }
 
     function formatDateEnglish(dateValue) {
-      if (!dateValue) return "N/A";
-      const date = new Date(dateValue + "T00:00:00");
-      return date.toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric"
-      });
-    }
-
+  if (!dateValue) return "N/A";
+  const date = new Date(dateValue + "T00:00:00");
+  const day = date.getDate();
+  const month = date.toLocaleString("en-GB", { month: "long" });
+  const year = date.getFullYear();
+  return `${day} ${month}, ${year}`;
+}
+    
     function getEnglishFerryLabel() {
       if (state.ferryType !== "MIX") return ferryEnglishNames[state.ferryType] || "-";
       return `Mix Ticket / Arrival ${ferryEnglishNames[state.mixArrival] || "-"} / Return ${ferryEnglishNames[state.mixReturn] || "-"}`;
@@ -1562,11 +1575,13 @@ ui.returnDateEl.addEventListener("click", (e) => {
     showToast("먼저 페리 회사를 선택해주세요");
     return;
   }
-  if (!ui.arrivalDateEl.value) {
+
+  if (state.tripType !== "RETURN_ONLY" && !ui.arrivalDateEl.value) {
     e.preventDefault();
     showToast("먼저 입도 날짜를 선택해주세요");
     return;
   }
+
   openDatePicker(ui.returnDateEl);
 });
 
@@ -1576,11 +1591,13 @@ ui.returnDateEl.addEventListener("touchstart", (e) => {
     showToast("먼저 페리 회사를 선택해주세요");
     return;
   }
-  if (!ui.arrivalDateEl.value) {
+
+  if (state.tripType !== "RETURN_ONLY" && !ui.arrivalDateEl.value) {
     e.preventDefault();
     showToast("먼저 입도 날짜를 선택해주세요");
     return;
   }
+
   openDatePicker(ui.returnDateEl);
 }, { passive: false });
 
