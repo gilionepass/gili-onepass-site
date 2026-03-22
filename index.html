@@ -5,26 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>길리섬 페리 + 픽업 샌딩 실시간 견적</title>
   <style>
-    :root {
-      --bg: #f3e08e;
-      --card: #ffffff;
-      --text: #0f172a;
-      --muted: #64748b;
-      --line: #d7dee8;
-      --line-strong: #bfd0df;
-      --blue: #18a7c8;
-      --blue-dark: #0e8fb0;
-      --green: #1db954;
-      --green-dark: #159344;
-      --orange: #ff6a00;
-      --orange-dark: #e35d00;
-      --danger: #ef4444;
-      --danger-bg: #fff1f2;
-      --soft: #eef8fb;
-      --shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
-      --radius: 24px;
+  :root {
+  --bg: #f3e08e;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --line: #d7dee8;
+  --line-strong: #bfd0df;
+  --blue: #18a7c8;
+  --blue-dark: #0e8fb0;
+  --green: #1db954;
+  --green-dark: #159344;
+  --orange: #ff6a00;
+  --orange-dark: #e35d00;
+  --danger: #ef4444;
+  --danger-bg: #fff1f2;
+  --soft: #eef8fb;
+  --shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+  --radius: 24px;
+}
 
-      .toast {
+.toast {
   position: fixed;
   left: 50%;
   bottom: 20px;
@@ -48,8 +49,7 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-      
-    }
+
 
     * { box-sizing: border-box; }
 
@@ -143,23 +143,26 @@
 }
 
     .lang-chip {
-      border: 1px solid var(--line);
-      background: #f8fafc;
-      color: #64748b;
-      border-radius: 999px;
-      padding: 8px 12px;
-      font-size: 13px;
-      font-weight: 700;
-      opacity: 0.8;
-      user-select: none;
-    }
+  border: 1px solid var(--line);
+  background: #f8fafc;
+  color: #64748b;
+  border-radius: 999px;
+  padding: 8px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.8;
+  user-select: none;
+  text-align: center;
+  min-width: 0;
+  white-space: nowrap;
+}
 
     .lang-chip.active {
-      background: #eef8fb;
-      color: #0f172a;
-      border-color: #8be2d7;
-      opacity: 1;
-    }
+  background: #eef8fb;
+  color: #0f172a;
+  border-color: #8be2d7;
+  opacity: 1;
+}
 
     .button-grid {
       display: grid;
@@ -235,6 +238,10 @@
   .wrap {
     max-width: 520px;
   }
+
+  .lang-row {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .ticket-price-note {
@@ -245,11 +252,12 @@
   margin-bottom: 2px;
 }
 
-.tax-note {
-  color: #ef4444;
+.ticket-price-note {
+  color: #64748b;
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.55;
+  margin-bottom: 2px;
 }
     .mix-box {
       display: none;
@@ -642,7 +650,7 @@
         <div class="row" id="ticketRow">
           <div>
             <div class="row-title" id="ticketLabel">페리티켓</div>
-           <div class="row-sub" id="ticketSub"></div>
+           <div class="row-sub tax-note" id="ticketSub"></div>
           </div>
           <div class="row-price" id="ticketPrice">Rp 0</div>
         </div>
