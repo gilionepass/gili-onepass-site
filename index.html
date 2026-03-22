@@ -23,6 +23,32 @@
       --soft: #eef8fb;
       --shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
       --radius: 24px;
+
+      .toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  background: rgba(15, 23, 42, 0.92);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  max-width: calc(100% - 32px);
+  text-align: center;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+      
     }
 
     * { box-sizing: border-box; }
@@ -104,11 +130,17 @@
     }
 
     .lang-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.lang-chip {
+  text-align: center;
+  padding: 8px 6px;
+  font-size: 12px;
+}
 
     .lang-chip {
       border: 1px solid var(--line);
@@ -477,10 +509,9 @@
     }
 
 
-      .action-row {
-        grid-template-columns: 1fr;
-      }
-    }
+  
+  
+  
   </style>
 </head>
 <body>
@@ -716,6 +747,8 @@
       copyOkEl: document.getElementById("copyOk"),
       waBtnEl: document.getElementById("waBtn")
     };
+
+    let toastTimer = null;
 
     const ferryDisplayNames = {
       EKAJAYA: "에카자야",
@@ -1155,6 +1188,11 @@
       if (state.ferryType === "MIX" && state.tripType === "ROUND") {
         if (!state.mixArrival || !state.mixReturn) return false;
       }
+      if (state.tripType === "ROUND") {
+  const hasPickup = ui.pickupLocationEl.value && ui.pickupLocationEl.value !== "미선택";
+  const hasDropoff = ui.dropoffLocationEl.value && ui.dropoffLocationEl.value !== "미선택";
+  if (!hasPickup && !hasDropoff) return false;
+}
 
       return true;
     }
@@ -1203,6 +1241,19 @@
         return false;
       }
 
+      if (state.tripType === "ROUND") {
+  const hasPickup = ui.pickupLocationEl.value && ui.pickupLocationEl.value !== "미선택";
+  const hasDropoff = ui.dropoffLocationEl.value && ui.dropoffLocationEl.value !== "미선택";
+
+  if (!hasPickup && !hasDropoff) {
+    ui.topErrorEl.textContent = "왕복은 픽업 또는 샌딩 중 최소 1개를 선택해주세요";
+    ui.topErrorEl.style.display = "block";
+    showToast("왕복은 픽업 또는 샌딩 중 최소 1개를 선택해주세요");
+    return false;
+  }
+}
+      
+
       if (state.ferryType === "MIX" && state.tripType === "ROUND") {
         let ok = true;
 
@@ -1236,7 +1287,18 @@
         ui.topErrorEl.style.display = "block";
       }
     }
+function showToast(message) {
+  const toastEl = document.getElementById("toast");
+  if (!toastEl) return;
 
+  toastEl.textContent = message;
+  toastEl.classList.add("show");
+
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    toastEl.classList.remove("show");
+  }, 3000);
+}
     function renderResult(scrollToCard = false) {
       if (!isFormComplete()) return;
 
@@ -1328,24 +1390,41 @@ ui.ticketPriceEl.textContent = formatRpFromK(ticket.total);
     }
 
     document.querySelectorAll("[data-trip]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        state.tripType = btn.dataset.trip;
-        updateButtonState("[data-trip]", state.tripType, "trip");
-        updateTripUI();
-        updateMixUI();
-        tryAutoCalculate();
-      });
-    });
+  btn.addEventListener("click", () => {
+    const passengers = Number(ui.passengersEl.value);
+    if (!passengers) {
+      showToast("인원수를 선택해주세요");
+      return;
+    }
 
-    document.querySelectorAll("[data-ferry]").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        if (btn.classList.contains("disabled")) return;
-        state.ferryType = btn.dataset.ferry;
-        updateButtonState("[data-ferry]", state.ferryType, "ferry");
-        updateMixUI();
-        tryAutoCalculate();
-      });
-    });
+    state.tripType = btn.dataset.trip;
+    updateButtonState("[data-trip]", state.tripType, "trip");
+    updateTripUI();
+    updateMixUI();
+    tryAutoCalculate();
+  });
+});
+
+   document.querySelectorAll("[data-ferry]").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    if (btn.classList.contains("disabled")) return;
+
+    if (!state.tripType) {
+      showToast("이동 구간을 선택해주세요");
+      return;
+    }
+
+    state.ferryType = btn.dataset.ferry;
+    updateButtonState("[data-ferry]", state.ferryType, "ferry");
+    updateMixUI();
+
+    if (state.ferryType === "MIX") {
+      showToast("페리 회사를 선택하세요");
+    }
+
+    tryAutoCalculate();
+  });
+});
 
     document.querySelectorAll("[data-mix-arrival]").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -1368,42 +1447,138 @@ ui.ticketPriceEl.textContent = formatRpFromK(ticket.total);
     });
 
     ui.passengersEl.addEventListener("change", tryAutoCalculate);
-    ui.pickupLocationEl.addEventListener("change", tryAutoCalculate);
-    ui.dropoffLocationEl.addEventListener("change", tryAutoCalculate);
+ui.pickupLocationEl.addEventListener("click", () => {
+  if (state.tripType !== "RETURN_ONLY" && !ui.arrivalDateEl.value) {
+    showToast("먼저 날짜를 선택해주세요");
+  }
+});
+
+ui.dropoffLocationEl.addEventListener("click", () => {
+  if (state.tripType === "ROUND" && !ui.returnDateEl.value) {
+    showToast("먼저 날짜를 선택해주세요");
+  }
+  if (state.tripType === "RETURN_ONLY" && !ui.returnDateEl.value) {
+    showToast("먼저 날짜를 선택해주세요");
+  }
+});
+
+ui.pickupLocationEl.addEventListener("change", tryAutoCalculate);
+ui.dropoffLocationEl.addEventListener("change", tryAutoCalculate);
 
     ui.arrivalDateEl.addEventListener("change", () => {
-      if (ui.arrivalDateEl.value) {
-        ui.returnDateEl.min = ui.arrivalDateEl.value;
-        if (state.tripType === "ROUND" && !ui.returnDateEl.value) {
-          ui.returnDateEl.value = ui.arrivalDateEl.value;
-        }
-      }
-      tryAutoCalculate();
-    });
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-    ui.returnDateEl.addEventListener("change", tryAutoCalculate);
+  if (ui.arrivalDateEl.value) {
+    const arrivalDate = new Date(ui.arrivalDateEl.value + "T00:00:00");
 
-    ui.returnDateEl.addEventListener("focus", () => {
-      if (!state.ferryType) {
-        ui.topErrorEl.textContent = "출도 날짜를 선택하려면 먼저 페리 회사를 선택해주세요";
-        ui.topErrorEl.style.display = "block";
-        ui.ferryWarnEl.style.display = "block";
-      }
-    });
+    if (arrivalDate < today) {
+      ui.arrivalDateEl.value = "";
+      showToast("오늘 이전 날짜는 선택할 수 없습니다");
+      return;
+    }
+
+    ui.returnDateEl.min = ui.arrivalDateEl.value;
+
+    if (state.tripType === "ROUND" && !ui.returnDateEl.value) {
+      ui.returnDateEl.value = ui.arrivalDateEl.value;
+    }
+
+    if (ui.returnDateEl.value && ui.returnDateEl.value < ui.arrivalDateEl.value) {
+      ui.returnDateEl.value = ui.arrivalDateEl.value;
+      showToast("출도 날짜는 입도 날짜 이후로 선택해주세요");
+    }
+  }
+
+  tryAutoCalculate();
+});
+
+    ui.returnDateEl.addEventListener("change", () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (ui.returnDateEl.value) {
+    const returnDate = new Date(ui.returnDateEl.value + "T00:00:00");
+
+    if (returnDate < today) {
+      ui.returnDateEl.value = "";
+      showToast("오늘 이전 날짜는 선택할 수 없습니다");
+      return;
+    }
+
+    if (ui.arrivalDateEl.value && ui.returnDateEl.value < ui.arrivalDateEl.value) {
+      ui.returnDateEl.value = ui.arrivalDateEl.value;
+      showToast("출도 날짜는 입도 날짜 이후로 선택해주세요");
+    }
+  }
+
+  tryAutoCalculate();
+});
 
     ui.estimateBtnEl.addEventListener("click", () => {
       if (!validateBeforeManual()) return;
       renderResult(true);
     });
 
-    [ui.arrivalDateEl, ui.returnDateEl].forEach((el) => {
-      el.addEventListener("click", () => {
-        if (el.showPicker) el.showPicker();
-      });
-    });
+    function openDatePicker(el) {
+  if (!el) return;
+  if (typeof el.showPicker === "function") {
+    el.showPicker();
+  } else {
+    el.focus();
+    el.click();
+  }
+}
+
+ui.arrivalDateEl.addEventListener("click", (e) => {
+  if (!state.ferryType) {
+    e.preventDefault();
+    showToast("먼저 페리 회사를 선택해주세요");
+    return;
+  }
+  openDatePicker(ui.arrivalDateEl);
+});
+
+ui.arrivalDateEl.addEventListener("touchstart", (e) => {
+  if (!state.ferryType) {
+    e.preventDefault();
+    showToast("먼저 페리 회사를 선택해주세요");
+    return;
+  }
+  openDatePicker(ui.arrivalDateEl);
+}, { passive: false });
+
+ui.returnDateEl.addEventListener("click", (e) => {
+  if (!state.ferryType) {
+    e.preventDefault();
+    showToast("먼저 페리 회사를 선택해주세요");
+    return;
+  }
+  if (!ui.arrivalDateEl.value) {
+    e.preventDefault();
+    showToast("먼저 입도 날짜를 선택해주세요");
+    return;
+  }
+  openDatePicker(ui.returnDateEl);
+});
+
+ui.returnDateEl.addEventListener("touchstart", (e) => {
+  if (!state.ferryType) {
+    e.preventDefault();
+    showToast("먼저 페리 회사를 선택해주세요");
+    return;
+  }
+  if (!ui.arrivalDateEl.value) {
+    e.preventDefault();
+    showToast("먼저 입도 날짜를 선택해주세요");
+    return;
+  }
+  openDatePicker(ui.returnDateEl);
+}, { passive: false });
 
     setTodayMinDate();
     loadPriceData();
   </script>
+  <div id="toast" class="toast"></div>
 </body>
 </html>
