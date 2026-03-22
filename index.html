@@ -175,19 +175,33 @@
 }
     
 @media (max-width: 540px) {
-  .button-grid.ferry-grid {
+  .button-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 
+  .button-grid.ferry-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
   #mixArrivalButtons,
-#mixReturnButtons {
-  display: grid !important;
-  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  gap: 8px;
-}
+  #mixReturnButtons {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 8px;
+  }
 
   .action-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .choice-btn {
+    min-width: 0;
+    font-size: 12px;
+    padding: 0 4px;
+  }
+
+  .wrap {
+    max-width: 520px;
   }
 }
 
