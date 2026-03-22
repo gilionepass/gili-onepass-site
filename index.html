@@ -1543,13 +1543,18 @@ ui.dropoffLocationEl.addEventListener("change", tryAutoCalculate);
 
     function openDatePicker(el) {
   if (!el) return;
+
+  // 모바일 대응 핵심
+  el.focus();
+
   if (typeof el.showPicker === "function") {
     el.showPicker();
   } else {
-    el.focus();
     el.click();
   }
 }
+
+    
 
 ui.arrivalDateEl.addEventListener("click", (e) => {
   if (!state.ferryType) {
