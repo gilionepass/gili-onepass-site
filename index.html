@@ -28,31 +28,52 @@
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 20px;
-  transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.92);
+  bottom: 18px;
+  transform: translateX(-50%) translateY(8px);
+  background: rgba(48, 55, 66, 0.96);
   color: #fff;
-  padding: 12px 16px;
-  border-radius: 12px;
+  padding: 10px 14px;
+  border-radius: 14px;
   font-size: 13px;
   font-weight: 800;
-  line-height: 1.4;
+  line-height: 1.35;
   z-index: 9999;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  max-width: calc(100% - 24px);
-  text-align: center;
-  white-space: normal;
-  word-break: keep-all;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  max-width: calc(100% - 28px);
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.22);
 }
 
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
+.toast-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
 
+.toast-icon {
+  font-size: 14px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
 
+.toast-text {
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.1px;
+}
+
+@media (max-width: 390px) {
+  .toast-inner {
+    white-space: normal;
+  }
+}
     * { box-sizing: border-box; }
 
     body {
@@ -125,6 +146,13 @@
       outline: none;
     }
 
+    #product {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  padding-right: 34px;
+}
     select:focus,
     input[type="date"]:focus {
       border-color: var(--blue);
@@ -254,7 +282,12 @@
   line-height: 1.55;
   margin-bottom: 2px;
 }
-
+.tax-note {
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.55;
+}
 .ticket-price-note {
   color: #64748b;
   font-size: 12px;
@@ -1312,7 +1345,13 @@ function showToast(message) {
   const toastEl = document.getElementById("toast");
   if (!toastEl) return;
 
-  toastEl.textContent = message;
+  toastEl.innerHTML = `
+    <div class="toast-inner">
+      <span class="toast-icon">⚠️</span>
+      <span class="toast-text">${message}</span>
+    </div>
+  `;
+
   toastEl.classList.add("show");
 
   clearTimeout(toastTimer);
@@ -1554,57 +1593,53 @@ ui.dropoffLocationEl.addEventListener("change", tryAutoCalculate);
   }
 }
 
-    
+    function canOpenArrivalDate() {
+  if (!state.ferryType) {
+    showToast("먼저 페리 회사를 선택해주세요");
+    return false;
+  }
+  return true;
+}
+
+function canOpenReturnDate() {
+  if (!state.ferryType) {
+    showToast("먼저 페리 회사를 선택해주세요");
+    return false;
+  }
+
+  if (state.tripType !== "RETURN_ONLY" && !ui.arrivalDateEl.value) {
+    showToast("먼저 입도 날짜를 선택해주세요");
+    return false;
+  }
+
+  return true;
+}
+
+ui.arrivalDateGroup.addEventListener("click", (e) => {
+  if (e.target === ui.arrivalDateEl) return;
+  if (!canOpenArrivalDate()) return;
+  openDatePicker(ui.arrivalDateEl);
+});
+
+ui.returnDateGroup.addEventListener("click", (e) => {
+  if (e.target === ui.returnDateEl) return;
+  if (!canOpenReturnDate()) return;
+  openDatePicker(ui.returnDateEl);
+});
 
 ui.arrivalDateEl.addEventListener("click", (e) => {
-  if (!state.ferryType) {
+  if (!canOpenArrivalDate()) {
     e.preventDefault();
-    showToast("먼저 페리 회사를 선택해주세요");
-    return;
   }
-  openDatePicker(ui.arrivalDateEl);
 });
-
-ui.arrivalDateEl.addEventListener("touchstart", (e) => {
-  if (!state.ferryType) {
-    e.preventDefault();
-    showToast("먼저 페리 회사를 선택해주세요");
-    return;
-  }
-  openDatePicker(ui.arrivalDateEl);
-}, { passive: false });
 
 ui.returnDateEl.addEventListener("click", (e) => {
-  if (!state.ferryType) {
+  if (!canOpenReturnDate()) {
     e.preventDefault();
-    showToast("먼저 페리 회사를 선택해주세요");
-    return;
   }
-
-  if (state.tripType !== "RETURN_ONLY" && !ui.arrivalDateEl.value) {
-    e.preventDefault();
-    showToast("먼저 입도 날짜를 선택해주세요");
-    return;
-  }
-
-  openDatePicker(ui.returnDateEl);
 });
 
-ui.returnDateEl.addEventListener("touchstart", (e) => {
-  if (!state.ferryType) {
-    e.preventDefault();
-    showToast("먼저 페리 회사를 선택해주세요");
-    return;
-  }
 
-  if (state.tripType !== "RETURN_ONLY" && !ui.arrivalDateEl.value) {
-    e.preventDefault();
-    showToast("먼저 입도 날짜를 선택해주세요");
-    return;
-  }
-
-  openDatePicker(ui.returnDateEl);
-}, { passive: false });
 
     setTodayMinDate();
     loadPriceData();
