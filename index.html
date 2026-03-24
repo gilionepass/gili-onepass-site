@@ -532,8 +532,9 @@ const state = {
   ptTourType: "",
   ptDuration: "",
   ptCourses: new Set(),
-apDirection: "",
-ready: false
+  apDirection: "",
+  ready: false
+};
 
 const ui = {
   productEl: document.getElementById("product"),
@@ -818,10 +819,9 @@ function hideWarnings() {
    ui.blTourDateWarnEl,ui.tourTypeWarnEl,ui.tourDurationWarnEl,
    ui.ptStartTimeWarnEl,ui.ptTourDateWarnEl,ui.southCourseWarnEl,
    ui.eastCourseWarnEl,ui.taxiScheduleWarnEl,
-ui.airportDirWarnEl,ui.apArrivalDateWarnEl,
-ui.apFlightInfoWarnEl,ui.apDestWarnEl,
-ui.asPickupLocWarnEl,ui.asPickupTimeWarnEl
-
+   ui.airportDirWarnEl,ui.apArrivalDateWarnEl,
+   ui.apFlightInfoWarnEl,ui.apDestWarnEl,
+   ui.asPickupLocWarnEl,ui.asPickupTimeWarnEl
   ].forEach(el => { if(el){el.style.display="none"; el.textContent=el.textContent||"";} });
   ui.topErrorEl.textContent="";
 }
