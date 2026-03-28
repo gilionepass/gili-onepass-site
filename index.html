@@ -408,10 +408,18 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
           <div class="inline-note warn" id="apArrivalDateWarn" style="display:none;">날짜를 선택해주세요</div>
         </div>
         <div class="field-group">
-          <label class="label" for="apFlightInfo">항공편 번호 & 공항 도착 시간</label>
-          <input id="apFlightInfo" type="text" placeholder="예) KE631 / 14:30" style="width:100%;min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;" />
-          <div class="hint">항공편 번호와 도착 시간을 함께 입력해주세요</div>
-          <div class="inline-note warn" id="apFlightInfoWarn" style="display:none;">항공편 정보를 입력해주세요</div>
+          <label class="label" for="apFlightNo">항공편 번호</label>
+          <input id="apFlightNo" type="text" placeholder="예) KE631" style="width:100%;min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;" />
+          <div class="inline-note warn" id="apFlightNoWarn" style="display:none;">항공편 번호를 입력해주세요</div>
+        </div>
+        <div class="field-group">
+          <label class="label">공항 도착 시간</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <select id="apArrivalHour" style="min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;"></select>
+            <select id="apArrivalMin" style="min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;"></select>
+          </div>
+          <div class="inline-note warn" id="apArrivalTimeWarn" style="display:none;">도착 시간을 선택해주세요</div>
+          <div class="inline-note" id="apNightWarn" style="display:none;color:#f59e0b;font-weight:700;">🌙 19:00 이후는 야간요금이 적용됩니다</div>
         </div>
         <div class="field-group">
           <label class="label" for="apDestination">픽업 이후 목적지</label>
@@ -428,9 +436,13 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
           <div class="inline-note warn" id="asPickupLocWarn" style="display:none;">픽업 위치를 선택해주세요</div>
         </div>
         <div class="field-group">
-          <label class="label" for="asPickupTime">픽업 요청 시간</label>
-          <input id="asPickupTime" type="text" placeholder="예) 08:30" style="width:100%;min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;" />
-          <div class="inline-note warn" id="asPickupTimeWarn" style="display:none;">픽업 시간을 입력해주세요</div>
+          <label class="label">픽업 요청 시간</label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <select id="asPickupHour" style="min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;"></select>
+            <select id="asPickupMin" style="min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;"></select>
+          </div>
+          <div class="inline-note warn" id="asPickupTimeWarn" style="display:none;">픽업 시간을 선택해주세요</div>
+          <div class="inline-note" id="asNightWarn" style="display:none;color:#f59e0b;font-weight:700;">🌙 19:00 이후는 야간요금이 적용됩니다</div>
         </div>
         <div class="field-group">
           <label class="label">샌딩 위치</label>
@@ -447,8 +459,15 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
     <h2 class="result-title">예상 견적 결과</h2>
     <div class="estimate-box">
       <div class="estimate-kicker">총 예상 견적</div>
-      <div class="estimate-amount" id="resultTotalRp">Rp 0</div>
-      <div class="estimate-per" id="resultPerPerson">1인당 약 Rp 0</div>
+      <div style="display:flex;align-items:baseline;justify-content:center;gap:8px;flex-wrap:nowrap;">
+        <div class="estimate-amount" id="resultTotalRp">Rp 0</div>
+        <div id="krwTotal" style="font-size:13px;font-weight:700;background:#d0f4ef;color:#0e8fb0;border-radius:8px;padding:3px 10px;white-space:nowrap;"></div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:7px;flex-wrap:nowrap;">
+        <div class="estimate-per" id="resultPerPerson">1인당 약 Rp 0</div>
+        <div id="krwPerPerson" style="font-size:12px;font-weight:700;background:#d0f4ef;color:#0e8fb0;border-radius:6px;padding:2px 7px;white-space:nowrap;"></div>
+      </div>
+      <div id="krwRate" style="font-size:11px;color:var(--muted);margin-top:8px;"></div>
     </div>
     <div class="section-title">세부 계산</div>
     <div class="table-card">
@@ -499,13 +518,7 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
         <div class="row-price" id="grandTotalPrice">Rp 0</div>
       </div>
     </div>
-    <div class="krw-box">
-      <div>
-        <div class="krw-title">원화 예상가</div>
-        <div class="krw-desc">네이버 환율 기준으로 확인해주세요</div>
-      </div>
-      <a class="krw-link" href="https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_IDRKRW" target="_blank" rel="noopener noreferrer">네이버 환율 보기</a>
-    </div>
+
     <div class="action-row">
       <button type="button" class="copy-btn" id="copyBtn">📋 상담내용 복사</button>
       <a class="wa-btn" id="waBtn" href="#" target="_blank" rel="noopener noreferrer">💬 왓츠앱으로 바로 예약하기</a>
@@ -550,16 +563,26 @@ const ui = {
   // 공항 픽업
   apArrivalDateEl: document.getElementById("apArrivalDate"),
   apArrivalDateGroup: document.getElementById("apArrivalDateGroup"),
-  apFlightInfoEl: document.getElementById("apFlightInfo"),
+  apFlightNoEl: document.getElementById("apFlightNo"),
+  apArrivalHourEl: document.getElementById("apArrivalHour"),
+  apArrivalMinEl: document.getElementById("apArrivalMin"),
   apDestinationEl: document.getElementById("apDestination"),
   apArrivalDateWarnEl: document.getElementById("apArrivalDateWarn"),
-  apFlightInfoWarnEl: document.getElementById("apFlightInfoWarn"),
+  apFlightNoWarnEl: document.getElementById("apFlightNoWarn"),
+  apArrivalTimeWarnEl: document.getElementById("apArrivalTimeWarn"),
+  apNightWarnEl: document.getElementById("apNightWarn"),
   apDestWarnEl: document.getElementById("apDestWarn"),
   // 공항 샌딩
   asPickupLocationEl: document.getElementById("asPickupLocation"),
-  asPickupTimeEl: document.getElementById("asPickupTime"),
+  asPickupHourEl: document.getElementById("asPickupHour"),
+  asPickupMinEl: document.getElementById("asPickupMin"),
   asPickupLocWarnEl: document.getElementById("asPickupLocWarn"),
   asPickupTimeWarnEl: document.getElementById("asPickupTimeWarn"),
+  asNightWarnEl: document.getElementById("asNightWarn"),
+  // 환율
+  krwTotalEl: document.getElementById("krwTotal"),
+  krwPerPersonEl: document.getElementById("krwPerPerson"),
+  krwRateEl: document.getElementById("krwRate"),
   // 길리
   passengersEl: document.getElementById("passengers"),
   arrivalDateEl: document.getElementById("arrivalDate"),
@@ -675,22 +698,22 @@ const fallbackPriceData = {
     12: { EKAJAYA:{ROUND:1000,DEPARTURE:500,RETURN:550,MIX:500}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:630,DEPARTURE:315,RETURN:315,MIX:315}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} }
   },
   transport: {
-    "배출발 전날 야간공항 픽업":{english:"Night Airport",single:500,duo:450,airportPickup:0,airportSending:0},
-    "공항":{english:"Airport",single:450,duo:400,airportPickup:0,airportSending:0},
-    "꾸따":{english:"Kuta",single:400,duo:350,airportPickup:100,airportSending:100},
-    "스미냑":{english:"Seminyak",single:450,duo:400,airportPickup:100,airportSending:100},
-    "짐바란":{english:"Jimbaran",single:450,duo:400,airportPickup:100,airportSending:100},
-    "사누르":{english:"Sanur",single:400,duo:350,airportPickup:100,airportSending:100},
-    "우붓":{english:"Ubud",single:400,duo:350,airportPickup:100,airportSending:100},
-    "우붓 외곽":{english:"Outer Ubud",single:450,duo:400,airportPickup:100,airportSending:100},
-    "짱구":{english:"Canggu",single:450,duo:400,airportPickup:100,airportSending:100},
-    "울루와뚜":{english:"Uluwatu",single:500,duo:450,airportPickup:100,airportSending:100},
-    "기안야르":{english:"Gianyar",single:400,duo:350,airportPickup:100,airportSending:100},
-    "레기안":{english:"Legian",single:400,duo:350,airportPickup:100,airportSending:100},
-    "마라리버롯지":{english:"Mara River Lodge",single:350,duo:300,airportPickup:100,airportSending:100},
-    "로비나":{english:"Lovina",single:850,duo:800,airportPickup:100,airportSending:100},
-    "미선택":{english:"N/A",single:0,duo:0,airportPickup:0,airportSending:0},
-    "누사두아":{english:"Nusa Dua",single:475,duo:425,airportPickup:100,airportSending:100}
+    "배출발 전날 야간공항 픽업":{english:"Night Airport",single:500,duo:450,airportPickup:0,airportSending:0,airportPickupNight:0,airportSendingNight:0},
+    "공항":{english:"Airport",single:450,duo:400,airportPickup:0,airportSending:0,airportPickupNight:0,airportSendingNight:0},
+    "꾸따":{english:"Kuta",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "스미냑":{english:"Seminyak",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "짐바란":{english:"Jimbaran",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "사누르":{english:"Sanur",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "우붓":{english:"Ubud",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "우붓 외곽":{english:"Outer Ubud",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "짱구":{english:"Canggu",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "울루와뚜":{english:"Uluwatu",single:500,duo:450,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "기안야르":{english:"Gianyar",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "레기안":{english:"Legian",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "마라리버롯지":{english:"Mara River Lodge",single:350,duo:300,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "로비나":{english:"Lovina",single:850,duo:800,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
+    "미선택":{english:"N/A",single:0,duo:0,airportPickup:0,airportSending:0,airportPickupNight:0,airportSendingNight:0},
+    "누사두아":{english:"Nusa Dua",single:475,duo:425,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150}
   },
   transportOrder: ["배출발 전날 야간공항 픽업","공항","꾸따","스미냑","짐바란","사누르","우붓","우붓 외곽","짱구","울루와뚜","기안야르","레기안","마라리버롯지","로비나","미선택","누사두아"],
   blueLagoonPerPerson: 250,
@@ -730,6 +753,114 @@ function populateStartTimes() {
     opt.value = `${String(h).padStart(2,"0")}:00`;
     opt.textContent = `${String(h).padStart(2,"0")}:00`;
     ui.ptStartTimeEl.appendChild(opt);
+  }
+}
+
+function populateAirportTimePickers() {
+  // 시 선택 (00~23)
+  [ui.apArrivalHourEl, ui.asPickupHourEl].forEach(sel => {
+    sel.innerHTML = '<option value="">시</option>';
+    for (let h=0; h<24; h++) {
+      const opt = document.createElement("option");
+      opt.value = String(h).padStart(2,"0");
+      opt.textContent = `${String(h).padStart(2,"0")}시`;
+      sel.appendChild(opt);
+    }
+  });
+  // 분 선택 (00,10,20,30,40,50)
+  [ui.apArrivalMinEl, ui.asPickupMinEl].forEach(sel => {
+    sel.innerHTML = '<option value="">분</option>';
+    for (let m=0; m<60; m+=10) {
+      const opt = document.createElement("option");
+      opt.value = String(m).padStart(2,"0");
+      opt.textContent = `${String(m).padStart(2,"0")}분`;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function getAirportTime(hourEl, minEl) {
+  const h = hourEl.value;
+  const m = minEl.value;
+  if (!h || !m) return "";
+  return `${h}:${m}`;
+}
+
+function isNightTime(hourEl) {
+  const h = parseInt(hourEl.value);
+  return !isNaN(h) && h >= 19;
+}
+
+// ===== 환율 API =====
+let exchangeRate = null;
+let exchangeRateDate = null;
+
+async function loadExchangeRate() {
+  try {
+    const today = new Date().toISOString().slice(0,10);
+    const cached = sessionStorage.getItem('idrKrwRate');
+    const cachedDate = sessionStorage.getItem('idrKrwDate');
+    if (cached && cachedDate === today) {
+      exchangeRate = Number(cached);
+      exchangeRateDate = today;
+      return;
+    }
+    // cdn.jsdelivr.net - CORS 허용 무료 환율 API
+    const apis = [
+      'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/idr.json',
+      'https://latest.currency-api.pages.dev/v1/currencies/idr.json'
+    ];
+    let krwPerIdr = null;
+    for (const url of apis) {
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const data = await res.json();
+        krwPerIdr = data?.idr?.krw;
+        if (krwPerIdr) break;
+      } catch(e2) { continue; }
+    }
+    if (!krwPerIdr) throw new Error('API 실패');
+    exchangeRate = krwPerIdr;
+    exchangeRateDate = today;
+    sessionStorage.setItem('idrKrwRate', String(krwPerIdr));
+    sessionStorage.setItem('idrKrwDate', today);
+  } catch(e) {
+    exchangeRate = 0.085; // 폴백: 약 0.085원/루피아
+    exchangeRateDate = null;
+  }
+}
+
+function updateKrwDisplay(totalK, ppK) {
+  if (!exchangeRate) {
+    ui.krwTotalEl.textContent = '';
+    ui.krwPerPersonEl.textContent = '';
+    ui.krwRateEl.innerHTML = '📌 환율 정보를 불러오지 못했어요. <a href="https://finance.naver.com/marketindex/exchangeDetail.naver?marketindexCd=FX_IDRKRW" target="_blank" style="color:var(--blue);font-weight:700;">네이버 환율 보기</a>에서 직접 확인해주세요.';
+    return;
+  }
+  const totalRp = totalK * 1000;
+  const ppRp = ppK * 1000;
+  const totalKrw = Math.round(totalRp * exchangeRate);
+  const ppKrw = Math.round(ppRp * exchangeRate);
+  const per100K = Math.round(100000 * exchangeRate);
+  ui.krwTotalEl.textContent = `약 ${totalKrw.toLocaleString('ko-KR')}원`;
+  ui.krwPerPersonEl.textContent = `약 ${ppKrw.toLocaleString('ko-KR')}원`;
+  ui.krwRateEl.textContent = `(100K당 IDR ${per100K.toLocaleString('ko-KR')}원 · 오늘 09:00 기준)`;
+}
+
+// ===== MyMemory 번역 API =====
+async function translateSchedule(koreanText) {
+  if (!koreanText || !koreanText.trim()) return koreanText;
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(koreanText.trim())}&langpair=ko|en`;
+    const res = await fetch(url);
+    if (!res.ok) return koreanText;
+    const data = await res.json();
+    const translated = data?.responseData?.translatedText;
+    if (translated && translated !== koreanText) return translated;
+    return koreanText;
+  } catch(e) {
+    return koreanText;
   }
 }
 function showToast(msg) {
@@ -820,7 +951,7 @@ function hideWarnings() {
    ui.ptStartTimeWarnEl,ui.ptTourDateWarnEl,ui.southCourseWarnEl,
    ui.eastCourseWarnEl,ui.taxiScheduleWarnEl,
    ui.airportDirWarnEl,ui.apArrivalDateWarnEl,
-   ui.apFlightInfoWarnEl,ui.apDestWarnEl,
+   ui.apFlightNoWarnEl,ui.apArrivalTimeWarnEl,ui.apDestWarnEl,
    ui.asPickupLocWarnEl,ui.asPickupTimeWarnEl
   ].forEach(el => { if(el){el.style.display="none"; el.textContent=el.textContent||"";} });
   ui.topErrorEl.textContent="";
@@ -916,13 +1047,13 @@ function calculatePrivateTourTicket(passengers) {
   };
 }
 
-function calculateTransport(passengers, pickupEl, dropoffEl, alwaysSingle=false) {
+function calculateTransport(passengers, pickupEl, dropoffEl, alwaysSingle=false, alwaysDuo=false) {
   const vc = getVehicleCount(passengers);
   const pickup = pickupEl.value;
   const dropoff = dropoffEl.value;
   const hasPickup = pickup && pickup!=="미선택";
   const hasDropoff = dropoff && dropoff!=="미선택";
-  const useDuo = alwaysSingle ? false : (hasPickup && hasDropoff) || state.tripType!=="ROUND";
+  const useDuo = alwaysDuo ? true : alwaysSingle ? false : (hasPickup && hasDropoff) || state.tripType!=="ROUND";
 
   let pt=0, dt=0, pl="", dl="", ps="", ds="";
   if (hasPickup) {
@@ -937,27 +1068,6 @@ function calculateTransport(passengers, pickupEl, dropoffEl, alwaysSingle=false)
 }
 
 // ===== 영어 번역 (Claude API) =====
-async function translateSchedule(koreanText) {
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{
-          role: "user",
-          content: `Translate the following Korean Bali tour schedule request into natural English. Keep place names in their original Balinese/Indonesian form where known. Return ONLY the translated text, nothing else.\n\n${koreanText}`
-        }]
-      })
-    });
-    const data = await response.json();
-    return data.content?.[0]?.text || koreanText;
-  } catch(e) {
-    return koreanText;
-  }
-}
-
 // ===== 영어 문구 =====
 function buildGiliEnglishMessage(totalK, ppK, passengers) {
   const pickup = ui.pickupLocationEl.value;
@@ -1118,6 +1228,7 @@ function renderGiliResult(scroll) {
   const ppK = totalK/p;
   ui.resultTotalRpEl.textContent=formatRpFromK(totalK);
   ui.resultPerPersonEl.textContent=`1인당 약 ${formatRpFromK(ppK)}`;
+  updateKrwDisplay(totalK, ppK);
   ui.ticketLabelEl.textContent=ticket.label;
   const ul = state.tripType==="ROUND"?"인당 왕복 티켓":"인당 편도 티켓";
   ui.ticketSubEl.innerHTML=`<div class="ticket-price-note">${ul} ${formatRpFromK(ticket.perPerson)} × ${p}명</div><div class="tax-note">${ticket.taxNote}</div>`;
@@ -1139,11 +1250,12 @@ function renderBlueLagoonResult(scroll) {
   hideWarnings();
   const p = Number(ui.blPassengersEl.value);
   const ticket = calculateBlueLagoonTicket(p);
-  const transport = calculateTransport(p, ui.blPickupLocationEl, ui.blDropoffLocationEl, true);
+  const transport = calculateTransport(p, ui.blPickupLocationEl, ui.blDropoffLocationEl, false, true);
   const totalK = ticket.total+transport.pickupTotal+transport.dropoffTotal;
   const ppK = totalK/p;
   ui.resultTotalRpEl.textContent=formatRpFromK(totalK);
   ui.resultPerPersonEl.textContent=`1인당 약 ${formatRpFromK(ppK)}`;
+  updateKrwDisplay(totalK, ppK);
   ui.ticketLabelEl.textContent=ticket.label;
   ui.ticketSubEl.innerHTML=`<div class="ticket-price-note">인당 ${formatRpFromK(ticket.perPerson)} × ${p}명</div>`;
   ui.ticketPriceEl.textContent=formatRpFromK(ticket.total);
@@ -1219,6 +1331,7 @@ async function renderPrivateTourResult(scroll) {
   ui.ptInfoRowEl.style.display="block";
 
   ui.grandTotalPriceEl.textContent=formatRpFromK(totalK);
+  updateKrwDisplay(totalK, ppK);
   const msg=buildPrivateTourEnglishMessage(totalK,ppK,p,ticket,translatedSchedule,startTime,endTimeStr);
   ui.englishTextEl.textContent=msg;
   ui.waBtnEl.href=`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
@@ -1234,10 +1347,12 @@ function tryAutoCalculate() {
 
 // ===== 공항 픽업 & 샌딩 =====
 function isAirportPickupComplete() {
-  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="pickup" && ui.apArrivalDateEl.value && ui.apFlightInfoEl.value.trim() && ui.apDestinationEl.value && ui.apDestinationEl.value!=="미선택");
+  const time = getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl);
+  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="pickup" && ui.apArrivalDateEl.value && ui.apFlightNoEl.value.trim() && time && ui.apDestinationEl.value && ui.apDestinationEl.value!=="미선택");
 }
 function isAirportSendingComplete() {
-  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="sending" && ui.asPickupLocationEl.value && ui.asPickupLocationEl.value!=="미선택" && ui.asPickupTimeEl.value.trim());
+  const time = getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl);
+  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="sending" && ui.asPickupLocationEl.value && ui.asPickupLocationEl.value!=="미선택" && time);
 }
 
 function validateAirportPickup() {
@@ -1245,7 +1360,8 @@ function validateAirportPickup() {
   if (!Number(ui.apPassengersEl.value)) { ui.topErrorEl.textContent="인원수를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (!state.apDirection) { ui.airportDirWarnEl.style.display="block"; ui.topErrorEl.textContent="픽업 또는 샌딩을 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (!ui.apArrivalDateEl.value) { ui.apArrivalDateWarnEl.style.display="block"; return false; }
-  if (!ui.apFlightInfoEl.value.trim()) { ui.apFlightInfoWarnEl.style.display="block"; return false; }
+  if (!ui.apFlightNoEl.value.trim()) { ui.apFlightNoWarnEl.style.display="block"; return false; }
+  if (!getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl)) { ui.apArrivalTimeWarnEl.style.display="block"; return false; }
   if (!ui.apDestinationEl.value || ui.apDestinationEl.value==="미선택") { ui.apDestWarnEl.style.display="block"; return false; }
   return true;
 }
@@ -1254,31 +1370,40 @@ function validateAirportSending() {
   if (!Number(ui.apPassengersEl.value)) { ui.topErrorEl.textContent="인원수를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (!state.apDirection) { ui.airportDirWarnEl.style.display="block"; ui.topErrorEl.textContent="픽업 또는 샌딩을 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (!ui.asPickupLocationEl.value || ui.asPickupLocationEl.value==="미선택") { ui.asPickupLocWarnEl.style.display="block"; return false; }
-  if (!ui.asPickupTimeEl.value.trim()) { ui.asPickupTimeWarnEl.style.display="block"; return false; }
+  if (!getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl)) { ui.asPickupTimeWarnEl.style.display="block"; return false; }
   return true;
 }
 
 function calculateAirportPickup(passengers) {
   const vc = getVehicleCount(passengers);
   const dest = ui.apDestinationEl.value;
-  const pricePerVehicle = priceData.transport[dest]?.airportPickup ?? 100;
-  return { pricePerVehicle, vehicleCount: vc, total: pricePerVehicle * vc, dest };
+  const night = isNightTime(ui.apArrivalHourEl);
+  const pricePerVehicle = night
+    ? (priceData.transport[dest]?.airportPickupNight ?? priceData.transport[dest]?.airportPickup ?? 0)
+    : (priceData.transport[dest]?.airportPickup ?? 0);
+  return { pricePerVehicle, vehicleCount: vc, total: pricePerVehicle * vc, dest, night };
 }
 function calculateAirportSending(passengers) {
   const vc = getVehicleCount(passengers);
   const pickup = ui.asPickupLocationEl.value;
-  const pricePerVehicle = priceData.transport[pickup]?.airportSending ?? 100;
-  return { pricePerVehicle, vehicleCount: vc, total: pricePerVehicle * vc, pickup };
+  const night = isNightTime(ui.asPickupHourEl);
+  const pricePerVehicle = night
+    ? (priceData.transport[pickup]?.airportSendingNight ?? priceData.transport[pickup]?.airportSending ?? 0)
+    : (priceData.transport[pickup]?.airportSending ?? 0);
+  return { pricePerVehicle, vehicleCount: vc, total: pricePerVehicle * vc, pickup, night };
 }
 
 function buildAirportPickupEnglishMessage(totalK, ppK, passengers, calc) {
   const destEn = priceData.transport[calc.dest]?.english || calc.dest;
+  const time = getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl);
+  const nightNote = calc.night ? " (Night rate applied)" : "";
   return [
     "Hi, I'd like to make a booking.", "",
-    `- Product: Bali Airport Pickup`,
+    `- Product: Bali Airport Pickup${nightNote}`,
     `- Passengers: ${passengers}`,
     `- Arrival Date: ${formatDateEnglish(ui.apArrivalDateEl.value)}`,
-    `- Flight Info: ${ui.apFlightInfoEl.value.trim()}`,
+    `- Flight Number: ${ui.apFlightNoEl.value.trim()}`,
+    `- Arrival Time: ${time}`,
     `- Destination: ${destEn}`,
     "", `Total estimate: ${formatRpFromK(totalK)} (${formatRpFromK(ppK)}/person)`, "",
     "Please confirm availability. Thank you!"
@@ -1286,12 +1411,14 @@ function buildAirportPickupEnglishMessage(totalK, ppK, passengers, calc) {
 }
 function buildAirportSendingEnglishMessage(totalK, ppK, passengers, calc) {
   const pickupEn = priceData.transport[calc.pickup]?.english || calc.pickup;
+  const time = getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl);
+  const nightNote = calc.night ? " (Night rate applied)" : "";
   return [
     "Hi, I'd like to make a booking.", "",
-    `- Product: Bali Airport Sending`,
+    `- Product: Bali Airport Sending${nightNote}`,
     `- Passengers: ${passengers}`,
     `- Pickup Location: ${pickupEn}`,
-    `- Pickup Time: ${ui.asPickupTimeEl.value.trim()}`,
+    `- Pickup Time: ${time}`,
     `- Destination: Bali Airport (fixed)`,
     "", `Total estimate: ${formatRpFromK(totalK)} (${formatRpFromK(ppK)}/person)`, "",
     "Please confirm availability. Thank you!"
@@ -1304,15 +1431,17 @@ function renderAirportPickupResult(scroll) {
   const calc = calculateAirportPickup(p);
   const totalK = calc.total;
   const ppK = totalK / p;
+  const time = getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl);
 
   ui.resultTotalRpEl.textContent = formatRpFromK(totalK);
   ui.resultPerPersonEl.textContent = `1인당 약 ${formatRpFromK(ppK)}`;
-  ui.ticketLabelEl.textContent = `발리 공항 픽업 (${p}명)`;
+  updateKrwDisplay(totalK, ppK);
+  ui.ticketLabelEl.textContent = `발리 공항 픽업 (${p}명)${calc.night?" 🌙 야간요금":""}`;
   ui.ticketSubEl.innerHTML = `
     <div class="ticket-price-note">날짜 : ${formatDateKorean(ui.apArrivalDateEl.value)}</div>
-    <div class="ticket-price-note">항공편 & 도착시간 : ${ui.apFlightInfoEl.value.trim()}</div>
+    <div class="ticket-price-note">항공편 : ${ui.apFlightNoEl.value.trim()} / 도착시간 : ${time}</div>
     <div class="ticket-price-note">목적지 : ${calc.dest}</div>
-    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대</div>`;
+    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대${calc.night?" (야간요금)":""}</div>`;
   ui.ticketPriceEl.textContent = formatRpFromK(calc.total);
   ui.blInfoRowEl.style.display = "none";
   ui.ptInfoRowEl.style.display = "none";
@@ -1333,15 +1462,17 @@ function renderAirportSendingResult(scroll) {
   const calc = calculateAirportSending(p);
   const totalK = calc.total;
   const ppK = totalK / p;
+  const time = getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl);
 
   ui.resultTotalRpEl.textContent = formatRpFromK(totalK);
   ui.resultPerPersonEl.textContent = `1인당 약 ${formatRpFromK(ppK)}`;
-  ui.ticketLabelEl.textContent = `발리 공항 샌딩 (${p}명)`;
+  updateKrwDisplay(totalK, ppK);
+  ui.ticketLabelEl.textContent = `발리 공항 샌딩 (${p}명)${calc.night?" 🌙 야간요금":""}`;
   ui.ticketSubEl.innerHTML = `
     <div class="ticket-price-note">픽업 위치 : ${calc.pickup}</div>
-    <div class="ticket-price-note">픽업 시간 : ${ui.asPickupTimeEl.value.trim()}</div>
+    <div class="ticket-price-note">픽업 시간 : ${time}</div>
     <div class="ticket-price-note">샌딩 위치 : 발리 공항 (고정)</div>
-    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대</div>`;
+    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대${calc.night?" (야간요금)":""}</div>`;
   ui.ticketPriceEl.textContent = formatRpFromK(calc.total);
   ui.blInfoRowEl.style.display = "none";
   ui.ptInfoRowEl.style.display = "none";
@@ -1538,7 +1669,21 @@ ui.apArrivalDateEl.addEventListener("click", () => {});
 
 setTodayMinDate();
 populateStartTimes();
+populateAirportTimePickers();
 loadPriceData();
+loadExchangeRate();
+
+// 야간요금 안내 - 공항픽업 시간 선택
+ui.apArrivalHourEl.addEventListener("change", () => {
+  const night = isNightTime(ui.apArrivalHourEl);
+  ui.apNightWarnEl.style.display = night ? "block" : "none";
+});
+
+// 야간요금 안내 - 공항샌딩 시간 선택
+ui.asPickupHourEl.addEventListener("change", () => {
+  const night = isNightTime(ui.asPickupHourEl);
+  ui.asNightWarnEl.style.display = night ? "block" : "none";
+});
 </script>
 <div id="toast" class="toast"></div>
 </body>
