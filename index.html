@@ -77,7 +77,6 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
 .button-grid.ferry-grid { grid-template-columns:repeat(5,minmax(0,1fr)); }
 .button-grid.time-grid { grid-template-columns:repeat(2,1fr); }
 .button-grid.tour-grid { grid-template-columns:repeat(3,1fr); }
-.button-grid.duration-grid { grid-template-columns:repeat(2,1fr); }
 .button-grid.course-grid { grid-template-columns:repeat(2,1fr); }
 .choice-btn {
   min-height:44px; border-radius:12px; border:1px solid var(--line-strong);
@@ -305,14 +304,10 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
         <div class="inline-note warn" id="tourTypeWarn" style="display:none;">투어를 선택해주세요</div>
       </div>
 
-      <!-- 투어 진행 시간 -->
+      <!-- 투어 진행 시간: 10시간 고정 표시 (버튼 UI 제거) -->
       <div class="field-group">
         <label class="label">투어 진행 시간</label>
-        <div class="button-grid duration-grid" id="tourDurationButtons">
-          <button type="button" class="choice-btn" data-duration="8">8시간</button>
-          <button type="button" class="choice-btn" data-duration="10">10시간</button>
-        </div>
-        <div class="inline-note warn" id="tourDurationWarn" style="display:none;">투어 진행 시간을 선택해주세요</div>
+        <div style="width:100%;min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#f8fafc;color:var(--text);display:flex;align-items:center;font-weight:700;">10시간 (고정)</div>
       </div>
 
       <!-- 투어 시작 시간 -->
@@ -358,7 +353,7 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
         <div class="inline-note warn" id="eastCourseWarn" style="display:none;">코스를 1개 이상 선택해주세요</div>
       </div>
 
-      <!-- 공통 개인 스케줄 요청 (남부/동부/택시 공통) -->
+      <!-- 개인 스케줄 요청 -->
       <div class="field-group" id="extraScheduleGroup" style="display:none;">
         <label class="label" id="extraScheduleLabel">개인 스케줄 요청</label>
         <textarea id="extraSchedule" placeholder="원하시는 장소나 추가 요청사항을 자유롭게 입력해주세요. 빈칸이면 미선택으로 처리됩니다."></textarea>
@@ -419,7 +414,6 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
             <select id="apArrivalMin" style="min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;"></select>
           </div>
           <div class="inline-note warn" id="apArrivalTimeWarn" style="display:none;">도착 시간을 선택해주세요</div>
-          <div class="inline-note" id="apNightWarn" style="display:none;color:#f59e0b;font-weight:700;">🌙 19:00 이후는 야간요금이 적용됩니다</div>
         </div>
         <div class="field-group">
           <label class="label" for="apDestination">픽업 이후 목적지</label>
@@ -430,6 +424,12 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
 
       <!-- 샌딩 전용 필드 -->
       <div id="apSendingFields" style="display:none;">
+        <!-- 픽업 날짜 추가 (픽업 위치 위) -->
+        <div class="field-group" id="asSendingDateGroup">
+          <label class="label" for="asSendingDate">픽업 날짜</label>
+          <input id="asSendingDate" type="date" />
+          <div class="inline-note warn" id="asSendingDateWarn" style="display:none;">날짜를 선택해주세요</div>
+        </div>
         <div class="field-group">
           <label class="label" for="asPickupLocation">픽업 위치</label>
           <select id="asPickupLocation"></select>
@@ -442,7 +442,6 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
             <select id="asPickupMin" style="min-height:46px;border:1px solid var(--line-strong);border-radius:14px;padding:0 14px;font-size:15px;background:#fff;color:var(--text);outline:none;"></select>
           </div>
           <div class="inline-note warn" id="asPickupTimeWarn" style="display:none;">픽업 시간을 선택해주세요</div>
-          <div class="inline-note" id="asNightWarn" style="display:none;color:#f59e0b;font-weight:700;">🌙 19:00 이후는 야간요금이 적용됩니다</div>
         </div>
         <div class="field-group">
           <label class="label">샌딩 위치</label>
@@ -478,26 +477,21 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
         </div>
         <div class="row-price" id="ticketPrice">Rp 0</div>
       </div>
-      <!-- 블루라군 안내 -->
       <div class="row" id="blInfoRow" style="display:none;">
         <div style="grid-column:1/-1;width:100%;">
           <div class="info-note" style="color:#166534;">포함 : 점심식사, 고프로 촬영, 프라이빗 차량 픽업 샌딩</div>
           <div class="info-note" style="color:#ef4444;font-weight:700;">※ 스노쿨링투어는 퍼블릭투어로 다른 예약자와 같이 진행합니다</div>
         </div>
       </div>
-      <!-- 프라이빗 투어 스케줄 + 안내 -->
       <div class="row" id="ptInfoRow" style="display:none;">
         <div style="grid-column:1/-1;width:100%;">
-          <!-- 선택 스케줄 -->
           <div class="schedule-box" id="ptScheduleBox"></div>
-          <!-- 포함/불포함 -->
           <div style="margin-top:10px;">
             <div class="info-note" style="color:#166534;">포함 : 유류비, 차량 주차비</div>
             <div class="info-note" style="color:#ef4444;font-weight:700;">불포함 : 관광지 입장료, 관광지 내부 이동 경비, 개인 여행 비용</div>
           </div>
         </div>
       </div>
-      <!-- 픽업 (가격 있는 버전 — 길리/블루라군용) -->
       <div class="row" id="pickupRow">
         <div>
           <div class="row-title" id="pickupLabel">픽업</div>
@@ -505,7 +499,6 @@ select:focus, input[type="date"]:focus { border-color:var(--blue); box-shadow:0 
         </div>
         <div class="row-price" id="pickupPrice">Rp 0</div>
       </div>
-      <!-- 샌딩 (가격 있는 버전) -->
       <div class="row" id="dropoffRow">
         <div>
           <div class="row-title" id="dropoffLabel">샌딩</div>
@@ -537,13 +530,10 @@ const WHATSAPP_NUMBER = "6282342481260";
 
 const state = {
   productType: "gili-package",
-  // 길리
   tripType: "", ferryType: "", mixArrival: "", mixReturn: "",
-  // 블루라군
   blTourTime: "",
-  // 프라이빗 투어
   ptTourType: "",
-  ptDuration: "",
+  ptDuration: "10", // 10시간 고정
   ptCourses: new Set(),
   apDirection: "",
   ready: false
@@ -557,10 +547,8 @@ const ui = {
   airportForm: document.getElementById("airportForm"),
   apPickupFields: document.getElementById("apPickupFields"),
   apSendingFields: document.getElementById("apSendingFields"),
-  // 공항 공통
   apPassengersEl: document.getElementById("apPassengers"),
   airportDirWarnEl: document.getElementById("airportDirWarn"),
-  // 공항 픽업
   apArrivalDateEl: document.getElementById("apArrivalDate"),
   apArrivalDateGroup: document.getElementById("apArrivalDateGroup"),
   apFlightNoEl: document.getElementById("apFlightNo"),
@@ -570,20 +558,19 @@ const ui = {
   apArrivalDateWarnEl: document.getElementById("apArrivalDateWarn"),
   apFlightNoWarnEl: document.getElementById("apFlightNoWarn"),
   apArrivalTimeWarnEl: document.getElementById("apArrivalTimeWarn"),
-  apNightWarnEl: document.getElementById("apNightWarn"),
   apDestWarnEl: document.getElementById("apDestWarn"),
-  // 공항 샌딩
+  // 공항 샌딩 날짜 (신규)
+  asSendingDateEl: document.getElementById("asSendingDate"),
+  asSendingDateGroup: document.getElementById("asSendingDateGroup"),
+  asSendingDateWarnEl: document.getElementById("asSendingDateWarn"),
   asPickupLocationEl: document.getElementById("asPickupLocation"),
   asPickupHourEl: document.getElementById("asPickupHour"),
   asPickupMinEl: document.getElementById("asPickupMin"),
   asPickupLocWarnEl: document.getElementById("asPickupLocWarn"),
   asPickupTimeWarnEl: document.getElementById("asPickupTimeWarn"),
-  asNightWarnEl: document.getElementById("asNightWarn"),
-  // 환율
   krwTotalEl: document.getElementById("krwTotal"),
   krwPerPersonEl: document.getElementById("krwPerPerson"),
   krwRateEl: document.getElementById("krwRate"),
-  // 길리
   passengersEl: document.getElementById("passengers"),
   arrivalDateEl: document.getElementById("arrivalDate"),
   returnDateEl: document.getElementById("returnDate"),
@@ -601,7 +588,6 @@ const ui = {
   dropoffGroup: document.getElementById("dropoffGroup"),
   mixBoxEl: document.getElementById("mixBox"),
   mixMainButton: document.getElementById("mixMainButton"),
-  // 블루라군
   blPassengersEl: document.getElementById("blPassengers"),
   blTourDateEl: document.getElementById("blTourDate"),
   blPickupLocationEl: document.getElementById("blPickupLocation"),
@@ -609,7 +595,6 @@ const ui = {
   blTourDateGroup: document.getElementById("blTourDateGroup"),
   blTourDateWarnEl: document.getElementById("blTourDateWarn"),
   timeWarnEl: document.getElementById("timeWarn"),
-  // 프라이빗 투어
   ptPassengersEl: document.getElementById("ptPassengers"),
   ptStartTimeEl: document.getElementById("ptStartTime"),
   ptTourDateEl: document.getElementById("ptTourDate"),
@@ -618,19 +603,15 @@ const ui = {
   ptTourDateGroup: document.getElementById("ptTourDateGroup"),
   southCourseGroup: document.getElementById("southCourseGroup"),
   eastCourseGroup: document.getElementById("eastCourseGroup"),
-  taxiScheduleGroup: document.getElementById("taxiScheduleGroup"),
   extraScheduleGroup: document.getElementById("extraScheduleGroup"),
   extraScheduleLabelEl: document.getElementById("extraScheduleLabel"),
-  taxiScheduleEl: document.getElementById("extraSchedule"),
   extraScheduleEl: document.getElementById("extraSchedule"),
   tourTypeWarnEl: document.getElementById("tourTypeWarn"),
-  tourDurationWarnEl: document.getElementById("tourDurationWarn"),
   ptStartTimeWarnEl: document.getElementById("ptStartTimeWarn"),
   ptTourDateWarnEl: document.getElementById("ptTourDateWarn"),
   southCourseWarnEl: document.getElementById("southCourseWarn"),
   eastCourseWarnEl: document.getElementById("eastCourseWarn"),
   taxiScheduleWarnEl: document.getElementById("taxiScheduleWarn"),
-  // 공통
   loadingBoxEl: document.getElementById("loadingBox"),
   translatingBoxEl: document.getElementById("translatingBox"),
   estimateBtnEl: document.getElementById("estimateBtn"),
@@ -661,8 +642,7 @@ const ui = {
 let toastTimer = null;
 
 const ferryDisplayNames = { EKAJAYA:"에카자야", WAHANA:"와하나", SEMAYAONE:"세마야원", WIJAYA:"위자야", MIX:"믹스티켓" };
-const ferryEnglishNames = { EKAJAYA:"Eka Jaya", WAHANA:"Wahana", SEMAYAONE:"Semaya One", WIJAYA:"Wijaya" };
-const tripTypeEnglishNames = { ROUND:"Round trip", ARRIVAL_ONLY:"Padangbai → Gili (one way)", RETURN_ONLY:"Gili → Padangbai (one way)" };
+const ferryEnglishNames = { EKAJAYA:"EKA JAYA", WAHANA:"WAHANA", SEMAYAONE:"SEMAYA ONE", WIJAYA:"WIJAYA" };
 const tourTypeNames = { south:"남부투어", east:"동부투어", taxi:"택시투어" };
 const tourTypeEnglishNames = { south:"South Bali Tour", east:"East Bali Tour", taxi:"Taxi Tour (Custom Schedule)" };
 
@@ -682,43 +662,43 @@ const eastCoursesEn = {
   "라항한 스위트": "Lahangan Sweet Viewpoint"
 };
 
+// ===== 폴백 데이터 — 모든 가격 0 처리 (시트 연동 전 혼동 방지) =====
 const fallbackPriceData = {
   ferry: {
-    1:  { EKAJAYA:{ROUND:1000,DEPARTURE:500,RETURN:550,MIX:500}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:600,DEPARTURE:300,RETURN:300,MIX:300}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    2:  { EKAJAYA:{ROUND:1000,DEPARTURE:500,RETURN:550,MIX:500}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:630,DEPARTURE:315,RETURN:315,MIX:315}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    3:  { EKAJAYA:{ROUND:1000,DEPARTURE:500,RETURN:550,MIX:500}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:630,DEPARTURE:315,RETURN:315,MIX:315}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    4:  { EKAJAYA:{ROUND:1200,DEPARTURE:600,RETURN:600,MIX:600}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:630,DEPARTURE:315,RETURN:315,MIX:315}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    5:  { EKAJAYA:{ROUND:1200,DEPARTURE:600,RETURN:600,MIX:600}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:630,DEPARTURE:315,RETURN:315,MIX:315}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    6:  { EKAJAYA:{ROUND:1200,DEPARTURE:600,RETURN:600,MIX:600}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:630,DEPARTURE:315,RETURN:315,MIX:315}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    7:  { EKAJAYA:{ROUND:1200,DEPARTURE:600,RETURN:600,MIX:600}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:655,DEPARTURE:340,RETURN:340,MIX:328}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    8:  { EKAJAYA:{ROUND:1200,DEPARTURE:600,RETURN:600,MIX:600}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:655,DEPARTURE:315,RETURN:340,MIX:328}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    9:  { EKAJAYA:{ROUND:1200,DEPARTURE:600,RETURN:600,MIX:600}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:655,DEPARTURE:315,RETURN:340,MIX:328}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    10: { EKAJAYA:{ROUND:1000,DEPARTURE:500,RETURN:550,MIX:500}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:655,DEPARTURE:315,RETURN:340,MIX:328}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    11: { EKAJAYA:{ROUND:1000,DEPARTURE:500,RETURN:550,MIX:500}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:655,DEPARTURE:315,RETURN:340,MIX:328}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} },
-    12: { EKAJAYA:{ROUND:1000,DEPARTURE:500,RETURN:550,MIX:500}, WAHANA:{ROUND:660,DEPARTURE:330,RETURN:330,MIX:330}, SEMAYAONE:{ROUND:630,DEPARTURE:315,RETURN:315,MIX:315}, WIJAYA:{ROUND:650,DEPARTURE:325,RETURN:350,MIX:325} }
+    1:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    2:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    3:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    4:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    5:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    6:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    7:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    8:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    9:  { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    10: { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    11: { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} },
+    12: { EKAJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WAHANA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, SEMAYAONE:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0}, WIJAYA:{ROUND:0,DEPARTURE:0,RETURN:0,MIX:0} }
   },
   transport: {
-    "배출발 전날 야간공항 픽업":{english:"Night Airport",single:500,duo:450,airportPickup:0,airportSending:0,airportPickupNight:0,airportSendingNight:0},
-    "공항":{english:"Airport",single:450,duo:400,airportPickup:0,airportSending:0,airportPickupNight:0,airportSendingNight:0},
-    "꾸따":{english:"Kuta",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "스미냑":{english:"Seminyak",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "짐바란":{english:"Jimbaran",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "사누르":{english:"Sanur",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "우붓":{english:"Ubud",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "우붓 외곽":{english:"Outer Ubud",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "짱구":{english:"Canggu",single:450,duo:400,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "울루와뚜":{english:"Uluwatu",single:500,duo:450,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "기안야르":{english:"Gianyar",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "레기안":{english:"Legian",single:400,duo:350,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "마라리버롯지":{english:"Mara River Lodge",single:350,duo:300,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "로비나":{english:"Lovina",single:850,duo:800,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150},
-    "미선택":{english:"N/A",single:0,duo:0,airportPickup:0,airportSending:0,airportPickupNight:0,airportSendingNight:0},
-    "누사두아":{english:"Nusa Dua",single:475,duo:425,airportPickup:100,airportSending:100,airportPickupNight:150,airportSendingNight:150}
+    "배출발 전날 야간공항 픽업":{english:"Night Airport",single:0,duo:0,airportPickup:0,airportSending:0},
+    "공항":{english:"Airport",single:0,duo:0,airportPickup:0,airportSending:0},
+    "꾸따":{english:"Kuta",single:0,duo:0,airportPickup:0,airportSending:0},
+    "스미냑":{english:"Seminyak",single:0,duo:0,airportPickup:0,airportSending:0},
+    "짐바란":{english:"Jimbaran",single:0,duo:0,airportPickup:0,airportSending:0},
+    "사누르":{english:"Sanur",single:0,duo:0,airportPickup:0,airportSending:0},
+    "우붓":{english:"Ubud",single:0,duo:0,airportPickup:0,airportSending:0},
+    "우붓 외곽":{english:"Outer Ubud",single:0,duo:0,airportPickup:0,airportSending:0},
+    "짱구":{english:"Canggu",single:0,duo:0,airportPickup:0,airportSending:0},
+    "울루와뚜":{english:"Uluwatu",single:0,duo:0,airportPickup:0,airportSending:0},
+    "기안야르":{english:"Gianyar",single:0,duo:0,airportPickup:0,airportSending:0},
+    "레기안":{english:"Legian",single:0,duo:0,airportPickup:0,airportSending:0},
+    "마라리버롯지":{english:"Mara River Lodge",single:0,duo:0,airportPickup:0,airportSending:0},
+    "로비나":{english:"Lovina",single:0,duo:0,airportPickup:0,airportSending:0},
+    "미선택":{english:"N/A",single:0,duo:0,airportPickup:0,airportSending:0},
+    "누사두아":{english:"Nusa Dua",single:0,duo:0,airportPickup:0,airportSending:0}
   },
   transportOrder: ["배출발 전날 야간공항 픽업","공항","꾸따","스미냑","짐바란","사누르","우붓","우붓 외곽","짱구","울루와뚜","기안야르","레기안","마라리버롯지","로비나","미선택","누사두아"],
-  blueLagoonPerPerson: 250,
-  privateTour8H: 900,
-  privateTour10H: 1000
+  blueLagoonPerPerson: 0,
+  privateTour10H: 0
 };
 
 let priceData = null;
@@ -726,6 +706,11 @@ let priceData = null;
 // ===== 유틸 =====
 function formatRpFromK(k) {
   return "Rp " + Math.round(Number(k)*1000).toLocaleString("id-ID");
+}
+// 영어 문구용: "3,200K IDR" 형식
+function formatKForEnglish(k) {
+  const val = Math.round(Number(k));
+  return val.toLocaleString("en-US") + "K IDR";
 }
 function parseMonth(dateValue) {
   if (!dateValue) return null;
@@ -745,6 +730,7 @@ function setTodayMinDate() {
   ui.blTourDateEl.min = v;
   ui.ptTourDateEl.min = v;
   ui.apArrivalDateEl.min = v;
+  ui.asSendingDateEl.min = v;
 }
 function populateStartTimes() {
   ui.ptStartTimeEl.innerHTML = '<option value="">선택해 주세요</option>';
@@ -755,9 +741,7 @@ function populateStartTimes() {
     ui.ptStartTimeEl.appendChild(opt);
   }
 }
-
 function populateAirportTimePickers() {
-  // 시 선택 (00~23)
   [ui.apArrivalHourEl, ui.asPickupHourEl].forEach(sel => {
     sel.innerHTML = '<option value="">시</option>';
     for (let h=0; h<24; h++) {
@@ -767,7 +751,6 @@ function populateAirportTimePickers() {
       sel.appendChild(opt);
     }
   });
-  // 분 선택 (00,10,20,30,40,50)
   [ui.apArrivalMinEl, ui.asPickupMinEl].forEach(sel => {
     sel.innerHTML = '<option value="">분</option>';
     for (let m=0; m<60; m+=10) {
@@ -778,7 +761,6 @@ function populateAirportTimePickers() {
     }
   });
 }
-
 function getAirportTime(hourEl, minEl) {
   const h = hourEl.value;
   const m = minEl.value;
@@ -786,9 +768,27 @@ function getAirportTime(hourEl, minEl) {
   return `${h}:${m}`;
 }
 
-function isNightTime(hourEl) {
-  const h = parseInt(hourEl.value);
-  return !isNaN(h) && h >= 19;
+// ===== 날짜 포맷 =====
+// "22-April-2026" 형식
+function formatDateEnglish(dateValue) {
+  if (!dateValue) return "N/A";
+  const d = new Date(dateValue+"T00:00:00");
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  return `${d.getDate()}-${months[d.getMonth()]}-${d.getFullYear()}`;
+}
+function formatDateKorean(dateValue) {
+  if (!dateValue) return "N/A";
+  const d = new Date(dateValue+"T00:00:00");
+  return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
+}
+
+// 인원수에 따라 이름 줄 생성
+function buildGuestNames(passengers) {
+  let lines = "";
+  for (let i=1; i<=passengers; i++) {
+    lines += `\n${i}.`;
+  }
+  return lines;
 }
 
 // ===== 환율 API =====
@@ -805,7 +805,6 @@ async function loadExchangeRate() {
       exchangeRateDate = today;
       return;
     }
-    // cdn.jsdelivr.net - CORS 허용 무료 환율 API
     const apis = [
       'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/idr.json',
       'https://latest.currency-api.pages.dev/v1/currencies/idr.json'
@@ -826,7 +825,7 @@ async function loadExchangeRate() {
     sessionStorage.setItem('idrKrwRate', String(krwPerIdr));
     sessionStorage.setItem('idrKrwDate', today);
   } catch(e) {
-    exchangeRate = 0.085; // 폴백: 약 0.085원/루피아
+    exchangeRate = 0.085;
     exchangeRateDate = null;
   }
 }
@@ -863,6 +862,7 @@ async function translateSchedule(koreanText) {
     return koreanText;
   }
 }
+
 function showToast(msg) {
   const el = document.getElementById("toast");
   if (!el) return;
@@ -870,16 +870,6 @@ function showToast(msg) {
   el.classList.add("show");
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove("show"), 3000);
-}
-function formatDateEnglish(dateValue) {
-  if (!dateValue) return "N/A";
-  const d = new Date(dateValue+"T00:00:00");
-  return `${d.getDate()} ${d.toLocaleString("en-GB",{month:"long"})}, ${d.getFullYear()}`;
-}
-function formatDateKorean(dateValue) {
-  if (!dateValue) return "N/A";
-  const d = new Date(dateValue+"T00:00:00");
-  return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`;
 }
 
 // ===== 위치 채우기 =====
@@ -913,7 +903,6 @@ function switchProduct() {
   ui.privateTourForm.style.display = state.productType==="private-tour" ? "block" : "none";
   ui.airportForm.style.display = state.productType==="airport" ? "block" : "none";
   ui.resultCardEl.style.display = "none";
-  // 공항 방향 초기화
   if (state.productType === "airport") {
     state.apDirection = "";
     ui.apPickupFields.style.display = "none";
@@ -927,7 +916,6 @@ function switchProduct() {
 function updateTourTypeUI() {
   ui.southCourseGroup.style.display = state.ptTourType==="south" ? "block" : "none";
   ui.eastCourseGroup.style.display = state.ptTourType==="east" ? "block" : "none";
-  // 개인 스케줄 칸: 모든 투어 타입에 표시, 라벨만 다르게
   if (state.ptTourType==="taxi") {
     ui.extraScheduleGroup.style.display = "block";
     ui.extraScheduleLabelEl.textContent = "개인 스케줄 요청";
@@ -947,12 +935,12 @@ function updateTourTypeUI() {
 function hideWarnings() {
   [ui.topErrorEl,ui.ferryWarnEl,ui.mixArrivalWarnEl,ui.mixReturnWarnEl,
    ui.arrivalWarnEl,ui.returnWarnEl,ui.copyOkEl,ui.timeWarnEl,
-   ui.blTourDateWarnEl,ui.tourTypeWarnEl,ui.tourDurationWarnEl,
+   ui.blTourDateWarnEl,ui.tourTypeWarnEl,
    ui.ptStartTimeWarnEl,ui.ptTourDateWarnEl,ui.southCourseWarnEl,
    ui.eastCourseWarnEl,ui.taxiScheduleWarnEl,
    ui.airportDirWarnEl,ui.apArrivalDateWarnEl,
    ui.apFlightNoWarnEl,ui.apArrivalTimeWarnEl,ui.apDestWarnEl,
-   ui.asPickupLocWarnEl,ui.asPickupTimeWarnEl
+   ui.asPickupLocWarnEl,ui.asPickupTimeWarnEl,ui.asSendingDateWarnEl
   ].forEach(el => { if(el){el.style.display="none"; el.textContent=el.textContent||"";} });
   ui.topErrorEl.textContent="";
 }
@@ -1030,21 +1018,16 @@ function calculateTicket(passengers) {
 }
 
 function calculateBlueLagoonTicket(passengers) {
-  const pp = priceData?.blueLagoonPerPerson??250;
+  const pp = priceData?.blueLagoonPerPerson??0;
   return { perPerson:pp, total:pp*passengers, label:`빠당바이 블루라군 투어 티켓 (${passengers}명)` };
 }
 
 function calculatePrivateTourTicket(passengers) {
-  const pp = state.ptDuration==="8" ? (priceData?.privateTour8H??900) : (priceData?.privateTour10H??1000);
+  const pp = priceData?.privateTour10H??0;
   const vc = getVehicleCount(passengers);
   const total = pp * vc;
   const tourName = tourTypeNames[state.ptTourType]||"투어";
-  return {
-    perVehicle: pp,
-    vehicleCount: vc,
-    total,
-    label: `${tourName} ${state.ptDuration}시간 (${vc}대)`
-  };
+  return { perVehicle:pp, vehicleCount:vc, total, label:`${tourName} 10시간 (${vc}대)` };
 }
 
 function calculateTransport(passengers, pickupEl, dropoffEl, alwaysSingle=false, alwaysDuo=false) {
@@ -1054,7 +1037,6 @@ function calculateTransport(passengers, pickupEl, dropoffEl, alwaysSingle=false,
   const hasPickup = pickup && pickup!=="미선택";
   const hasDropoff = dropoff && dropoff!=="미선택";
   const useDuo = alwaysDuo ? true : alwaysSingle ? false : (hasPickup && hasDropoff) || state.tripType!=="ROUND";
-
   let pt=0, dt=0, pl="", dl="", ps="", ds="";
   if (hasPickup) {
     const pb = useDuo ? (priceData.transport[pickup]?.duo??0) : (priceData.transport[pickup]?.single??0);
@@ -1067,73 +1049,179 @@ function calculateTransport(passengers, pickupEl, dropoffEl, alwaysSingle=false,
   return {pickupTotal:pt,dropoffTotal:dt,pickupLabel:pl,dropoffLabel:dl,pickupSub:ps,dropoffSub:ds};
 }
 
-// ===== 영어 번역 (Claude API) =====
-// ===== 영어 문구 =====
+// ===== 공항 가격 계산 (야간요금 제거, F열=airportPickup, G열=airportSending) =====
+function calculateAirportPickup(passengers) {
+  const vc = getVehicleCount(passengers);
+  const dest = ui.apDestinationEl.value;
+  const pricePerVehicle = priceData.transport[dest]?.airportPickup ?? 0;
+  return { pricePerVehicle, vehicleCount:vc, total:pricePerVehicle*vc, dest };
+}
+function calculateAirportSending(passengers) {
+  const vc = getVehicleCount(passengers);
+  const pickup = ui.asPickupLocationEl.value;
+  const pricePerVehicle = priceData.transport[pickup]?.airportSending ?? 0;
+  return { pricePerVehicle, vehicleCount:vc, total:pricePerVehicle*vc, pickup };
+}
+
+// ===== 영어 상담 문구 (통일된 포맷) =====
+
+function buildGuestNamesBlock(passengers) {
+  let block = "Guests' Names:";
+  for (let i=1; i<=passengers; i++) block += `\n${i}.`;
+  return block;
+}
+
 function buildGiliEnglishMessage(totalK, ppK, passengers) {
   const pickup = ui.pickupLocationEl.value;
   const dropoff = ui.dropoffLocationEl.value;
-  const ferryLabel = state.ferryType!=="MIX"
-    ? ferryEnglishNames[state.ferryType]||"-"
-    : `Mix (Arrival: ${ferryEnglishNames[state.mixArrival]||"-"} / Return: ${ferryEnglishNames[state.mixReturn]||"-"})`;
-  const productLabel = `Gili Island Ferry Ticket + Pickup + Sending (${tripTypeEnglishNames[state.tripType]||"-"}, ${ferryLabel})`;
-  return [
-    "Hi, I'd like to make a booking.", "",
-    `- Product: ${productLabel}`,
-    `- Passengers: ${passengers}`,
-    ...(state.tripType!=="RETURN_ONLY"?[`- Date In: ${formatDateEnglish(ui.arrivalDateEl.value)}`]:[]),
-    ...(state.tripType!=="ARRIVAL_ONLY"?[`- Date Out: ${formatDateEnglish(ui.returnDateEl.value)}`]:[]),
-    ...(state.tripType!=="RETURN_ONLY"?[`- Pickup: ${priceData.transport[pickup]?.english||"N/A"}`]:[]),
-    ...(state.tripType!=="ARRIVAL_ONLY"?[`- Sending: ${priceData.transport[dropoff]?.english||"N/A"}`]:[]),
-    "", `Total estimate: ${formatRpFromK(totalK)} (${formatRpFromK(ppK)}/person)`, "",
-    "Please confirm availability. Thank you!"
-  ].join("\n");
+  const hasPickup = pickup && pickup!=="미선택";
+  const hasDropoff = dropoff && dropoff!=="미선택";
+  const ppKFormatted = Math.round(ppK);
+  const totalFormatted = Math.round(totalK);
+
+  let ferryLabel = "";
+  if (state.ferryType === "MIX") {
+    ferryLabel = `IN: ${ferryEnglishNames[state.mixArrival]||"-"} / OUT: ${ferryEnglishNames[state.mixReturn]||"-"}`;
+  } else {
+    ferryLabel = ferryEnglishNames[state.ferryType]||"-";
+  }
+
+  const lines = ["Hi, I would like to make a reservation.", ""];
+  lines.push(`BOAT COMPANY: ${ferryLabel}`);
+
+  if (state.tripType === "ROUND") {
+    lines.push(`Departure Date: ${formatDateEnglish(ui.arrivalDateEl.value)}`);
+    lines.push(`Departure Time: `);
+    lines.push(`Return Date: ${formatDateEnglish(ui.returnDateEl.value)}`);
+    lines.push(`Return Time: `);
+    lines.push(`FROM: Padangbai`);
+    lines.push(`TO: Gili Trawangan`);
+  } else if (state.tripType === "ARRIVAL_ONLY") {
+    lines.push(`Departure Date: ${formatDateEnglish(ui.arrivalDateEl.value)}`);
+    lines.push(`Departure Time: `);
+    lines.push(`FROM: Padangbai`);
+    lines.push(`TO: Gili Trawangan`);
+  } else {
+    lines.push(`Return Date: ${formatDateEnglish(ui.returnDateEl.value)}`);
+    lines.push(`Return Time: `);
+    lines.push(`FROM: Gili Trawangan`);
+    lines.push(`TO: Padangbai`);
+  }
+
+  lines.push(`Number of Guests: ${passengers}`);
+  lines.push(buildGuestNamesBlock(passengers));
+  lines.push("");
+
+  if (state.tripType !== "RETURN_ONLY" && hasPickup) {
+    lines.push(`Pick-up hotel at Bali: ${priceData.transport[pickup]?.english||pickup}`);
+  }
+  if (state.tripType !== "ARRIVAL_ONLY" && hasDropoff) {
+    lines.push(`Drop-off hotel at Bali: ${priceData.transport[dropoff]?.english||dropoff}`);
+  }
+
+  lines.push("");
+  lines.push(`TOTAL PAYMENT: ${formatKForEnglish(totalFormatted)} (${formatKForEnglish(ppKFormatted)}/Person)`);
+
+  return lines.join("\n");
 }
 
 function buildBlueLagoonEnglishMessage(totalK, ppK, passengers) {
   const pickup = ui.blPickupLocationEl.value;
   const dropoff = ui.blDropoffLocationEl.value;
-  return [
-    "Hi, I'd like to make a booking.", "",
-    `- Product: Padangbai Blue Lagoon Tour (Pickup & Sending)`,
-    `- Passengers: ${passengers}`,
-    `- Tour Date: ${formatDateEnglish(ui.blTourDateEl.value)}`,
-    `- Start Time: ${state.blTourTime}`,
-    `- Pickup: ${priceData.transport[pickup]?.english||"N/A"}`,
-    `- Sending: ${priceData.transport[dropoff]?.english||"N/A"}`,
-    "", "Inclusions: Lunch, GoPro filming",
-    "Transport: Private vehicle for pickup & sending",
-    "Note: Public snorkeling tour (shared with other guests)",
-    "", `Total estimate: ${formatRpFromK(totalK)} (${formatRpFromK(ppK)}/person)`, "",
-    "Please confirm availability. Thank you!"
-  ].join("\n");
+  const hasPickup = pickup && pickup!=="미선택";
+  const hasDropoff = dropoff && dropoff!=="미선택";
+  const ppKFormatted = Math.round(ppK);
+  const totalFormatted = Math.round(totalK);
+
+  const lines = ["Hi, I would like to make a reservation.", ""];
+  lines.push(`Product: Padangbai Blue Lagoon Tour`);
+  lines.push(`Tour Date: ${formatDateEnglish(ui.blTourDateEl.value)}`);
+  lines.push(`Start Time: ${state.blTourTime}`);
+  lines.push(`Number of Guests: ${passengers}`);
+  lines.push(buildGuestNamesBlock(passengers));
+  lines.push("");
+  if (hasPickup) lines.push(`Pick-up hotel at Bali: ${priceData.transport[pickup]?.english||pickup}`);
+  if (hasDropoff) lines.push(`Drop-off hotel at Bali: ${priceData.transport[dropoff]?.english||dropoff}`);
+  lines.push(`Inclusions: Lunch, GoPro filming`);
+  lines.push(`Note: Public snorkeling tour (shared with other guests)`);
+  lines.push("");
+  lines.push(`TOTAL PAYMENT: ${formatKForEnglish(totalFormatted)} (${formatKForEnglish(ppKFormatted)}/Person)`);
+  return lines.join("\n");
 }
 
 function buildPrivateTourEnglishMessage(totalK, ppK, passengers, ticket, translatedSchedule="", startTime="", endTimeStr="") {
   const pickup = ui.ptPickupLocationEl.value;
   const dropoff = ui.ptDropoffLocationEl.value;
+  const hasPickup = pickup && pickup!=="미선택";
+  const hasDropoff = dropoff && dropoff!=="미선택";
   const tourEn = tourTypeEnglishNames[state.ptTourType]||"-";
   const courses = [...state.ptCourses];
-  const timeStr = (startTime && endTimeStr) ? `${startTime} ~ ${endTimeStr} (${state.ptDuration}hrs)` : startTime||"-";
-  const productLabel = `${tourEn} ${state.ptDuration}hrs`;
+  const timeStr = (startTime && endTimeStr) ? `${startTime} ~ ${endTimeStr} (10hrs)` : startTime||"-";
+  const ppKFormatted = Math.round(ppK);
+  const totalFormatted = Math.round(totalK);
 
-  let courseLines = [];
-  if (state.ptTourType==="south") courseLines = courses.map(c=>`  · ${southCoursesEn[c]||c}`);
-  else if (state.ptTourType==="east") courseLines = courses.map(c=>`  · ${eastCoursesEn[c]||c}`);
+  const lines = ["Hi, I would like to make a reservation.", ""];
+  lines.push(`Product: ${tourEn} 10hrs`);
+  lines.push(`Tour Date: ${formatDateEnglish(ui.ptTourDateEl.value)}`);
+  lines.push(`Tour Time: ${timeStr}`);
+  lines.push(`Number of Guests: ${passengers}`);
+  lines.push(buildGuestNamesBlock(passengers));
+  lines.push("");
+  if (hasPickup) lines.push(`Pick-up hotel at Bali: ${priceData.transport[pickup]?.english||pickup}`);
+  if (hasDropoff) lines.push(`Drop-off hotel at Bali: ${priceData.transport[dropoff]?.english||dropoff}`);
 
-  return [
-    "Hi, I'd like to make a booking.", "",
-    `- Product: ${productLabel}`,
-    `- Passengers: ${passengers}`,
-    `- Tour Date: ${formatDateEnglish(ui.ptTourDateEl.value)}`,
-    `- Tour Time: ${timeStr}`,
-    `- Pickup: ${priceData.transport[pickup]?.english||"N/A"}`,
-    `- Sending: ${priceData.transport[dropoff]?.english||"N/A"}`,
-    ...(courseLines.length>0?["- Requested Courses:",...courseLines]:[]),
-    ...(translatedSchedule?[`- Custom Schedule: ${translatedSchedule}`]:[]),
-    "", `- Tour Price: ${formatRpFromK(ticket.total)} (${ticket.vehicleCount} vehicle${ticket.vehicleCount>1?"s":""} × ${formatRpFromK(ticket.perVehicle)} each)`,
-    "", `Total estimate: ${formatRpFromK(totalK)} (${formatRpFromK(ppK)}/person)`, "",
-    "Please confirm availability. Thank you!"
-  ].join("\n");
+  if (courses.length > 0) {
+    let courseList = "";
+    if (state.ptTourType==="south") courseList = courses.map(c=>southCoursesEn[c]||c).join(", ");
+    else if (state.ptTourType==="east") courseList = courses.map(c=>eastCoursesEn[c]||c).join(", ");
+    if (courseList) lines.push(`Requested Courses: ${courseList}`);
+  }
+  if (translatedSchedule) lines.push(`Custom Schedule: ${translatedSchedule}`);
+
+  lines.push("");
+  lines.push(`TOTAL PAYMENT: ${formatKForEnglish(totalFormatted)} (${formatKForEnglish(ppKFormatted)}/Person)`);
+  return lines.join("\n");
+}
+
+function buildAirportPickupEnglishMessage(totalK, ppK, passengers, calc) {
+  const destEn = priceData.transport[calc.dest]?.english || calc.dest;
+  const time = getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl);
+  const ppKFormatted = Math.round(ppK);
+  const totalFormatted = Math.round(totalK);
+
+  const lines = ["Hi, I would like to make a reservation.", ""];
+  lines.push(`Product: Bali Airport Pickup`);
+  lines.push(`Arrival Date: ${formatDateEnglish(ui.apArrivalDateEl.value)}`);
+  lines.push(`Flight Number: ${ui.apFlightNoEl.value.trim()}`);
+  lines.push(`Arrival Time: ${time}`);
+  lines.push(`Number of Guests: ${passengers}`);
+  lines.push(buildGuestNamesBlock(passengers));
+  lines.push("");
+  lines.push(`Destination: ${destEn}`);
+  lines.push("");
+  lines.push(`TOTAL PAYMENT: ${formatKForEnglish(totalFormatted)} (${formatKForEnglish(ppKFormatted)}/Person)`);
+  return lines.join("\n");
+}
+
+function buildAirportSendingEnglishMessage(totalK, ppK, passengers, calc) {
+  const pickupEn = priceData.transport[calc.pickup]?.english || calc.pickup;
+  const time = getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl);
+  const ppKFormatted = Math.round(ppK);
+  const totalFormatted = Math.round(totalK);
+  const sendingDate = ui.asSendingDateEl.value;
+
+  const lines = ["Hi, I would like to make a reservation.", ""];
+  lines.push(`Product: Bali Airport Sending`);
+  lines.push(`Pickup Date: ${formatDateEnglish(sendingDate)}`);
+  lines.push(`Pickup Time: ${time}`);
+  lines.push(`Number of Guests: ${passengers}`);
+  lines.push(buildGuestNamesBlock(passengers));
+  lines.push("");
+  lines.push(`Pickup Location: ${pickupEn}`);
+  lines.push(`Destination: Bali Airport (fixed)`);
+  lines.push("");
+  lines.push(`TOTAL PAYMENT: ${formatKForEnglish(totalFormatted)} (${formatKForEnglish(ppKFormatted)}/Person)`);
+  return lines.join("\n");
 }
 
 // ===== 완료 체크 =====
@@ -1155,11 +1243,19 @@ function isBlueLagoonFormComplete() {
 }
 function isPrivateTourFormComplete() {
   const p = Number(ui.ptPassengersEl.value);
-  if (!p||!state.ptTourType||!state.ptDuration||!ui.ptStartTimeEl.value||!ui.ptTourDateEl.value) return false;
+  if (!p||!state.ptTourType||!ui.ptStartTimeEl.value||!ui.ptTourDateEl.value) return false;
   if (state.ptTourType==="south"&&state.ptCourses.size===0) return false;
   if (state.ptTourType==="east"&&state.ptCourses.size===0) return false;
   if (state.ptTourType==="taxi"&&!ui.extraScheduleEl.value.trim()) return false;
   return true;
+}
+function isAirportPickupComplete() {
+  const time = getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl);
+  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="pickup" && ui.apArrivalDateEl.value && ui.apFlightNoEl.value.trim() && time && ui.apDestinationEl.value && ui.apDestinationEl.value!=="미선택");
+}
+function isAirportSendingComplete() {
+  const time = getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl);
+  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="sending" && ui.asSendingDateEl.value && ui.asPickupLocationEl.value && ui.asPickupLocationEl.value!=="미선택" && time);
 }
 
 // ===== 유효성 검사 =====
@@ -1197,12 +1293,30 @@ function validatePrivateTour() {
   hideWarnings();
   if (!Number(ui.ptPassengersEl.value)) { ui.topErrorEl.textContent="인원수를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (!state.ptTourType) { ui.tourTypeWarnEl.style.display="block"; ui.topErrorEl.textContent="투어를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
-  if (!state.ptDuration) { ui.tourDurationWarnEl.style.display="block"; ui.topErrorEl.textContent="투어 진행 시간을 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (!ui.ptStartTimeEl.value) { ui.ptStartTimeWarnEl.style.display="block"; return false; }
   if (!ui.ptTourDateEl.value) { ui.ptTourDateWarnEl.style.display="block"; return false; }
   if (state.ptTourType==="south"&&state.ptCourses.size===0) { ui.southCourseWarnEl.style.display="block"; ui.topErrorEl.textContent="코스를 1개 이상 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (state.ptTourType==="east"&&state.ptCourses.size===0) { ui.eastCourseWarnEl.style.display="block"; ui.topErrorEl.textContent="코스를 1개 이상 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
   if (state.ptTourType==="taxi"&&!ui.extraScheduleEl.value.trim()) { ui.taxiScheduleWarnEl.style.display="block"; return false; }
+  return true;
+}
+function validateAirportPickup() {
+  hideWarnings();
+  if (!Number(ui.apPassengersEl.value)) { ui.topErrorEl.textContent="인원수를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
+  if (!state.apDirection) { ui.airportDirWarnEl.style.display="block"; ui.topErrorEl.textContent="픽업 또는 샌딩을 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
+  if (!ui.apArrivalDateEl.value) { ui.apArrivalDateWarnEl.style.display="block"; return false; }
+  if (!ui.apFlightNoEl.value.trim()) { ui.apFlightNoWarnEl.style.display="block"; return false; }
+  if (!getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl)) { ui.apArrivalTimeWarnEl.style.display="block"; return false; }
+  if (!ui.apDestinationEl.value || ui.apDestinationEl.value==="미선택") { ui.apDestWarnEl.style.display="block"; return false; }
+  return true;
+}
+function validateAirportSending() {
+  hideWarnings();
+  if (!Number(ui.apPassengersEl.value)) { ui.topErrorEl.textContent="인원수를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
+  if (!state.apDirection) { ui.airportDirWarnEl.style.display="block"; ui.topErrorEl.textContent="픽업 또는 샌딩을 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
+  if (!ui.asSendingDateEl.value) { ui.asSendingDateWarnEl.style.display="block"; return false; }
+  if (!ui.asPickupLocationEl.value || ui.asPickupLocationEl.value==="미선택") { ui.asPickupLocWarnEl.style.display="block"; return false; }
+  if (!getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl)) { ui.asPickupTimeWarnEl.style.display="block"; return false; }
   return true;
 }
 
@@ -1279,16 +1393,14 @@ async function renderPrivateTourResult(scroll) {
   const totalK = ticket.total;
   const ppK = totalK/p;
 
-  // 종료시간 계산
   const startTime = ui.ptStartTimeEl.value;
   let endTimeStr = "";
   if (startTime) {
     const startH = parseInt(startTime.split(":")[0]);
-    const endH = startH + parseInt(state.ptDuration);
-    endTimeStr = `${String(endH).padStart(2,"0")}:00`;
+    const endH = startH + 10;
+    endTimeStr = `${String(endH).padStart(2,"00")}:00`;
   }
 
-  // 개인 스케줄 번역 (내용 있으면)
   const rawSchedule = ui.extraScheduleEl.value.trim();
   let translatedSchedule = "";
   if (rawSchedule) {
@@ -1308,7 +1420,6 @@ async function renderPrivateTourResult(scroll) {
   ui.pickupRowEl.style.display="none";
   ui.dropoffRowEl.style.display="none";
 
-  // 스케줄 박스
   const pickup = ui.ptPickupLocationEl.value;
   const dropoff = ui.ptDropoffLocationEl.value;
   const courses = [...state.ptCourses];
@@ -1316,7 +1427,7 @@ async function renderPrivateTourResult(scroll) {
   let scheduleHTML = `<div class="schedule-label">선택 스케줄</div>`;
   scheduleHTML += `<div class="schedule-item">투어 날짜 : ${formatDateKorean(ui.ptTourDateEl.value)}</div>`;
   if (startTime && endTimeStr) {
-    scheduleHTML += `<div class="schedule-item">투어 시작시간 : ${startTime} ~ ${endTimeStr} (${state.ptDuration}시간 투어)</div>`;
+    scheduleHTML += `<div class="schedule-item">투어 시작시간 : ${startTime} ~ ${endTimeStr} (10시간 투어)</div>`;
   }
   if (pickup && pickup!=="미선택") scheduleHTML += `<div class="schedule-item">픽업 위치 : ${pickup}</div>`;
   if (dropoff && dropoff!=="미선택") scheduleHTML += `<div class="schedule-item">샌딩 위치 : ${dropoff}</div>`;
@@ -1340,91 +1451,6 @@ async function renderPrivateTourResult(scroll) {
   if (scroll) ui.resultCardEl.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
-function tryAutoCalculate() {
-  if (state.productType==="gili-package"&&isGiliFormComplete()) renderGiliResult(false);
-  if (state.productType==="blue-lagoon"&&isBlueLagoonFormComplete()) renderBlueLagoonResult(false);
-}
-
-// ===== 공항 픽업 & 샌딩 =====
-function isAirportPickupComplete() {
-  const time = getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl);
-  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="pickup" && ui.apArrivalDateEl.value && ui.apFlightNoEl.value.trim() && time && ui.apDestinationEl.value && ui.apDestinationEl.value!=="미선택");
-}
-function isAirportSendingComplete() {
-  const time = getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl);
-  return !!(Number(ui.apPassengersEl.value) && state.apDirection==="sending" && ui.asPickupLocationEl.value && ui.asPickupLocationEl.value!=="미선택" && time);
-}
-
-function validateAirportPickup() {
-  hideWarnings();
-  if (!Number(ui.apPassengersEl.value)) { ui.topErrorEl.textContent="인원수를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
-  if (!state.apDirection) { ui.airportDirWarnEl.style.display="block"; ui.topErrorEl.textContent="픽업 또는 샌딩을 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
-  if (!ui.apArrivalDateEl.value) { ui.apArrivalDateWarnEl.style.display="block"; return false; }
-  if (!ui.apFlightNoEl.value.trim()) { ui.apFlightNoWarnEl.style.display="block"; return false; }
-  if (!getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl)) { ui.apArrivalTimeWarnEl.style.display="block"; return false; }
-  if (!ui.apDestinationEl.value || ui.apDestinationEl.value==="미선택") { ui.apDestWarnEl.style.display="block"; return false; }
-  return true;
-}
-function validateAirportSending() {
-  hideWarnings();
-  if (!Number(ui.apPassengersEl.value)) { ui.topErrorEl.textContent="인원수를 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
-  if (!state.apDirection) { ui.airportDirWarnEl.style.display="block"; ui.topErrorEl.textContent="픽업 또는 샌딩을 선택해주세요"; ui.topErrorEl.style.display="block"; return false; }
-  if (!ui.asPickupLocationEl.value || ui.asPickupLocationEl.value==="미선택") { ui.asPickupLocWarnEl.style.display="block"; return false; }
-  if (!getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl)) { ui.asPickupTimeWarnEl.style.display="block"; return false; }
-  return true;
-}
-
-function calculateAirportPickup(passengers) {
-  const vc = getVehicleCount(passengers);
-  const dest = ui.apDestinationEl.value;
-  const night = isNightTime(ui.apArrivalHourEl);
-  const pricePerVehicle = night
-    ? (priceData.transport[dest]?.airportPickupNight ?? priceData.transport[dest]?.airportPickup ?? 0)
-    : (priceData.transport[dest]?.airportPickup ?? 0);
-  return { pricePerVehicle, vehicleCount: vc, total: pricePerVehicle * vc, dest, night };
-}
-function calculateAirportSending(passengers) {
-  const vc = getVehicleCount(passengers);
-  const pickup = ui.asPickupLocationEl.value;
-  const night = isNightTime(ui.asPickupHourEl);
-  const pricePerVehicle = night
-    ? (priceData.transport[pickup]?.airportSendingNight ?? priceData.transport[pickup]?.airportSending ?? 0)
-    : (priceData.transport[pickup]?.airportSending ?? 0);
-  return { pricePerVehicle, vehicleCount: vc, total: pricePerVehicle * vc, pickup, night };
-}
-
-function buildAirportPickupEnglishMessage(totalK, ppK, passengers, calc) {
-  const destEn = priceData.transport[calc.dest]?.english || calc.dest;
-  const time = getAirportTime(ui.apArrivalHourEl, ui.apArrivalMinEl);
-  const nightNote = calc.night ? " (Night rate applied)" : "";
-  return [
-    "Hi, I'd like to make a booking.", "",
-    `- Product: Bali Airport Pickup${nightNote}`,
-    `- Passengers: ${passengers}`,
-    `- Arrival Date: ${formatDateEnglish(ui.apArrivalDateEl.value)}`,
-    `- Flight Number: ${ui.apFlightNoEl.value.trim()}`,
-    `- Arrival Time: ${time}`,
-    `- Destination: ${destEn}`,
-    "", `Total estimate: ${formatRpFromK(totalK)} (${formatRpFromK(ppK)}/person)`, "",
-    "Please confirm availability. Thank you!"
-  ].join("\n");
-}
-function buildAirportSendingEnglishMessage(totalK, ppK, passengers, calc) {
-  const pickupEn = priceData.transport[calc.pickup]?.english || calc.pickup;
-  const time = getAirportTime(ui.asPickupHourEl, ui.asPickupMinEl);
-  const nightNote = calc.night ? " (Night rate applied)" : "";
-  return [
-    "Hi, I'd like to make a booking.", "",
-    `- Product: Bali Airport Sending${nightNote}`,
-    `- Passengers: ${passengers}`,
-    `- Pickup Location: ${pickupEn}`,
-    `- Pickup Time: ${time}`,
-    `- Destination: Bali Airport (fixed)`,
-    "", `Total estimate: ${formatRpFromK(totalK)} (${formatRpFromK(ppK)}/person)`, "",
-    "Please confirm availability. Thank you!"
-  ].join("\n");
-}
-
 function renderAirportPickupResult(scroll) {
   hideWarnings();
   const p = Number(ui.apPassengersEl.value);
@@ -1436,12 +1462,12 @@ function renderAirportPickupResult(scroll) {
   ui.resultTotalRpEl.textContent = formatRpFromK(totalK);
   ui.resultPerPersonEl.textContent = `1인당 약 ${formatRpFromK(ppK)}`;
   updateKrwDisplay(totalK, ppK);
-  ui.ticketLabelEl.textContent = `발리 공항 픽업 (${p}명)${calc.night?" 🌙 야간요금":""}`;
+  ui.ticketLabelEl.textContent = `발리 공항 픽업 (${p}명)`;
   ui.ticketSubEl.innerHTML = `
     <div class="ticket-price-note">날짜 : ${formatDateKorean(ui.apArrivalDateEl.value)}</div>
     <div class="ticket-price-note">항공편 : ${ui.apFlightNoEl.value.trim()} / 도착시간 : ${time}</div>
     <div class="ticket-price-note">목적지 : ${calc.dest}</div>
-    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대${calc.night?" (야간요금)":""}</div>`;
+    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대</div>`;
   ui.ticketPriceEl.textContent = formatRpFromK(calc.total);
   ui.blInfoRowEl.style.display = "none";
   ui.ptInfoRowEl.style.display = "none";
@@ -1467,12 +1493,13 @@ function renderAirportSendingResult(scroll) {
   ui.resultTotalRpEl.textContent = formatRpFromK(totalK);
   ui.resultPerPersonEl.textContent = `1인당 약 ${formatRpFromK(ppK)}`;
   updateKrwDisplay(totalK, ppK);
-  ui.ticketLabelEl.textContent = `발리 공항 샌딩 (${p}명)${calc.night?" 🌙 야간요금":""}`;
+  ui.ticketLabelEl.textContent = `발리 공항 샌딩 (${p}명)`;
   ui.ticketSubEl.innerHTML = `
+    <div class="ticket-price-note">픽업 날짜 : ${formatDateKorean(ui.asSendingDateEl.value)}</div>
     <div class="ticket-price-note">픽업 위치 : ${calc.pickup}</div>
     <div class="ticket-price-note">픽업 시간 : ${time}</div>
     <div class="ticket-price-note">샌딩 위치 : 발리 공항 (고정)</div>
-    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대${calc.night?" (야간요금)":""}</div>`;
+    <div class="ticket-price-note" style="margin-top:4px;">${formatRpFromK(calc.pricePerVehicle)} × ${calc.vehicleCount}대</div>`;
   ui.ticketPriceEl.textContent = formatRpFromK(calc.total);
   ui.blInfoRowEl.style.display = "none";
   ui.ptInfoRowEl.style.display = "none";
@@ -1485,6 +1512,11 @@ function renderAirportSendingResult(scroll) {
   ui.copyBtnEl.onclick = () => copyToClipboard(msg);
   ui.resultCardEl.style.display = "block";
   if (scroll) ui.resultCardEl.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function tryAutoCalculate() {
+  if (state.productType==="gili-package"&&isGiliFormComplete()) renderGiliResult(false);
+  if (state.productType==="blue-lagoon"&&isBlueLagoonFormComplete()) renderBlueLagoonResult(false);
 }
 
 async function copyToClipboard(text) {
@@ -1551,12 +1583,6 @@ document.querySelectorAll("[data-tour]").forEach(btn => btn.addEventListener("cl
   tryAutoCalculate();
 }));
 
-document.querySelectorAll("[data-duration]").forEach(btn => btn.addEventListener("click", () => {
-  state.ptDuration=btn.dataset.duration;
-  updateButtonState("[data-duration]",state.ptDuration,"duration");
-  tryAutoCalculate();
-}));
-
 document.querySelectorAll("[data-course]").forEach(btn => btn.addEventListener("click", () => {
   const c = btn.dataset.course;
   if (state.ptCourses.has(c)) { state.ptCourses.delete(c); btn.classList.remove("multi-active"); }
@@ -1599,6 +1625,7 @@ ui.returnDateEl.addEventListener("change", () => {
   }
   tryAutoCalculate();
 });
+
 // 날짜 이벤트 — 블루라군
 ui.blTourDateEl.addEventListener("change", () => {
   const today=new Date(); today.setHours(0,0,0,0);
@@ -1608,6 +1635,7 @@ ui.blTourDateEl.addEventListener("change", () => {
   }
   tryAutoCalculate();
 });
+
 // 날짜 이벤트 — 프라이빗 투어
 ui.ptTourDateEl.addEventListener("change", () => {
   const today=new Date(); today.setHours(0,0,0,0);
@@ -1633,6 +1661,25 @@ ui.arrivalDateEl.addEventListener("click", e => { if (!canOpenArrivalDate()) e.p
 ui.returnDateEl.addEventListener("click", e => { if (!canOpenReturnDate()) e.preventDefault(); });
 ui.blTourDateGroup.addEventListener("click", () => openDatePicker(ui.blTourDateEl));
 ui.ptTourDateGroup.addEventListener("click", () => openDatePicker(ui.ptTourDateEl));
+ui.asSendingDateGroup.addEventListener("click", () => openDatePicker(ui.asSendingDateEl));
+ui.apArrivalDateGroup.addEventListener("click", () => openDatePicker(ui.apArrivalDateEl));
+
+// 날짜 이벤트 — 공항 샌딩
+ui.asSendingDateEl.addEventListener("change", () => {
+  const today=new Date(); today.setHours(0,0,0,0);
+  if (ui.asSendingDateEl.value) {
+    const d=new Date(ui.asSendingDateEl.value+"T00:00:00");
+    if (d<today) { ui.asSendingDateEl.value=""; showToast("오늘 이전 날짜는 선택할 수 없습니다"); return; }
+  }
+});
+// 날짜 이벤트 — 공항 픽업
+ui.apArrivalDateEl.addEventListener("change", () => {
+  const today=new Date(); today.setHours(0,0,0,0);
+  if (ui.apArrivalDateEl.value) {
+    const d=new Date(ui.apArrivalDateEl.value+"T00:00:00");
+    if (d<today) { ui.apArrivalDateEl.value=""; showToast("오늘 이전 날짜는 선택할 수 없습니다"); return; }
+  }
+});
 
 // 견적 확인 버튼
 ui.estimateBtnEl.addEventListener("click", async () => {
@@ -1656,34 +1703,11 @@ document.querySelectorAll("[data-airport-dir]").forEach(btn => btn.addEventListe
   hideWarnings();
 }));
 
-// 공항 픽업 날짜
-ui.apArrivalDateEl.addEventListener("change", () => {
-  const today = new Date(); today.setHours(0,0,0,0);
-  if (ui.apArrivalDateEl.value) {
-    const d = new Date(ui.apArrivalDateEl.value+"T00:00:00");
-    if (d < today) { ui.apArrivalDateEl.value=""; showToast("오늘 이전 날짜는 선택할 수 없습니다"); return; }
-  }
-});
-ui.apArrivalDateGroup.addEventListener("click", () => openDatePicker(ui.apArrivalDateEl));
-ui.apArrivalDateEl.addEventListener("click", () => {});
-
 setTodayMinDate();
 populateStartTimes();
 populateAirportTimePickers();
 loadPriceData();
 loadExchangeRate();
-
-// 야간요금 안내 - 공항픽업 시간 선택
-ui.apArrivalHourEl.addEventListener("change", () => {
-  const night = isNightTime(ui.apArrivalHourEl);
-  ui.apNightWarnEl.style.display = night ? "block" : "none";
-});
-
-// 야간요금 안내 - 공항샌딩 시간 선택
-ui.asPickupHourEl.addEventListener("change", () => {
-  const night = isNightTime(ui.asPickupHourEl);
-  ui.asNightWarnEl.style.display = night ? "block" : "none";
-});
 </script>
 <div id="toast" class="toast"></div>
 </body>
