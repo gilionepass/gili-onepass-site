@@ -1012,7 +1012,17 @@ function calculateTicket(passengers) {
     else if (state.tripType==="ARRIVAL_ONLY") pp = getFerryPrice(am,state.ferryType,"DEPARTURE");
     else pp = getFerryPrice(rm,state.ferryType,"RETURN");
   } else {
-    pp = getFerryPrice(am,state.mixArrival,"MIX") + getFerryPrice(rm,state.mixReturn,"MIX");
+    const arrivalPrice = state.mixArrival === "WIJAYA"
+  ? getFerryPrice(am, "WIJAYA", "DEPARTURE")
+  : getFerryPrice(am, state.mixArrival, "MIX");
+
+const returnPrice = state.mixReturn === "WIJAYA"
+  ? (state.mixArrival === "WIJAYA"
+      ? getFerryPrice(rm, "WIJAYA", "ROUND") / 2
+      : getFerryPrice(rm, "WIJAYA", "RETURN"))
+  : getFerryPrice(rm, state.mixReturn, "MIX");
+
+pp = arrivalPrice + returnPrice;
   }
   return { perPerson:pp, total:pp*passengers, label:getTicketLabel(passengers), taxNote:getTaxNote({ferryType:state.ferryType,tripType:state.tripType,mixArrival:state.mixArrival,mixReturn:state.mixReturn}) };
 }
